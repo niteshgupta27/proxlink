@@ -67,6 +67,12 @@ class BottomNavigationView extends GetView<BottomNavigationController> {
                         label: 'Jobs',
                         index: 2,
                       ),
+                      _buildNavItem(
+                        context,
+                        iconPath: Images.chat,
+                        label: 'Chat',
+                        index: 3,
+                      ),
                     ],
                     selectedLabelStyle: TextStyle(
                       fontWeight: FontWeight.w800,
