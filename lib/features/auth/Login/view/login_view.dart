@@ -165,7 +165,7 @@ class _LoginViewState extends State<LoginView> {
                       backgroundColor: AppColors.whites,
                       textColor: const Color(0xFF2D2D37),
                       onPressed: () {
-                        // Handle Google login
+                        controller.signInWithGoogle();
                       },
                     ),
                   ),
@@ -182,9 +182,7 @@ class _LoginViewState extends State<LoginView> {
                       textColor: AppColors.primaryColor,
                       borderColor: AppColors.primaryColor,
                       onPressed: () {
-                        // Handle Facebook login
-
-                        Get.offNamed(Routes.SignUpSCREEN );
+                        controller.signInWithFacebook();
                       },
                     ),
                   ),
@@ -218,6 +216,7 @@ class _LoginViewState extends State<LoginView> {
                 ],
               ),
             ),
+           // Obx(() => controller.isLoading.value ?  CustomLoaderWidget() : const SizedBox.shrink()),
           ],
         ),
       ),
@@ -286,6 +285,3 @@ class SocialLoginButton extends StatelessWidget {
     );
   }
 }
-
-
-

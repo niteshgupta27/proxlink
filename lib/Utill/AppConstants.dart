@@ -6,7 +6,7 @@ class AppConstants {
 
   static const String fontFamily_Inter = 'Inter';
 
-  static const String baseUrl = 'https://dashboard.proxlink.com/api/';
+  static const String baseUrl = 'https://customersquare.com/lalaat/api/';
   static const String ImaepathHost='https://dashboard.proxlink.com/';
   // static const String baseUrl = 'https://proxlink.encodeit.in/api/';
   // static const String ImaepathHost='https://proxlink.encodeit.in/';
@@ -15,6 +15,7 @@ class AppConstants {
 
   static const loginUserInformation = 'loginUserInformation_storage';
   static const loginUserInformationToken = 'loginUserInformation_token';
+  static const loginUserId = 'login_user_id';
   static const productHeaderColor = "productHeaderColor";
   static const ServiceHeaderColor = "ServiceHeaderColor";
   static const AmcHeaderColor = "amcHeaderColor";
@@ -41,6 +42,7 @@ class AppConstants {
   static var providergoogle='auth/signup/google';
   static var providerfacebook='auth/signup/facebook';
   static var providerapple='auth/signup/apple';
+  static var social_login='auth/social_login.php';
   static var productdashboard='product/dashboard';
   static var category_display='product/category_display/user';
   static var display_section_details = 'product/display_section_details';

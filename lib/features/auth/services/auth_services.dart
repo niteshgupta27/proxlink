@@ -65,4 +65,33 @@ class AuthServices {
       rethrow;
     }
   }
+
+  Future<SocialResponse> providerfacebook({body}) async {
+    try {
+      final response = await BaseClient.sharedClient.postPreLogin(
+        endPoint: AppConstants.providerfacebook,
+        body: body,
+      );
+      print("response=====$response");
+      return SocialResponse.fromJson(response as Map<String, dynamic>);
+    } catch (exception) {
+      print("response=====$exception");
+      rethrow;
+    }
+  }
+
+  Future<SocialResponse> socialLogin({body}) async {
+    try {
+      print(body);
+      final response = await BaseClient.sharedClient.postPreLogin(
+        endPoint: AppConstants.social_login,
+        body: body,
+      );
+      print("response=====$response");
+      return SocialResponse.fromJson(response as Map<String, dynamic>);
+    } catch (exception) {
+      print("response=====$exception");
+      rethrow;
+    }
+  }
 }

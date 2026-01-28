@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
@@ -51,13 +53,13 @@ String providername="";
     print(user?.tenantId);
     if (user != null) {
       if(providername=="Facebook"){
-        SocialFacebooklogin(user.email,user.displayName,user.tenantId);
+        signInWithSocial(user, "facebook");
       }
      else if(providername=="Apple"){
-        SocialAppplelogin(user.email,user.displayName,user.tenantId);
+        signInWithSocial(user, "apple");
       }
       else if(providername=="Google"){
-        SocialGooglelogin(user.email,user.displayName,user.tenantId);
+        signInWithSocial(user, "google");
       }
       //Get.offAllNamed('/home'); // Navigate to home if logged in
     } else {
@@ -108,7 +110,7 @@ print(value);
     });
   }
   Future<UserCredential?> signInWithGoogle() async {
-
+    providername = "Google";
     try {
       if (kIsWeb) {
 
@@ -129,7 +131,9 @@ print(value);
         String? email = user?.email ?? additionalInfo?.profile?['email'];
         print("User's email: $email");
        // print("User's email: ${userCredential.user?.email}");
-        SocialGooglelogin(email,additionalInfo?.profile?['name'],user?.uid);
+        if (user != null) {
+          signInWithSocial(user, "google", webEmail: email);
+        }
         return userCredential;
       } else {
 
@@ -140,26 +144,18 @@ print(value);
           print("User canceled the sign-in.");
           return null;
         }
-      //  FcmToken= await AppUtils.initializeFCM();
 
-        SocialGooglelogin(googleUser.email,googleUser.displayName,googleUser.id);
-        // if (googleUser != null) {
-        //   return PigeonUserDetails.fromGoogleAccount(googleUser);
-        // }
+        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+        final OAuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
 
-        // final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-        // print("User canceled the sign-in.1${googleAuth}");
-        // final OAuthCredential credential = GoogleAuthProvider.credential(
-        //   accessToken: googleAuth.accessToken,
-        //   idToken: googleAuth.idToken,
-        // );
-        // print("User canceled the sign-in.2$credential");
-        // UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
-        // print("User canceled the sign-in.3");
-        // String? email = userCredential.user?.email;
-        // print("User's email: $email");
-        //
-        // return userCredential;
+        UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+        if (userCredential.user != null) {
+          signInWithSocial(userCredential.user!, "google", token: googleAuth.idToken);
+        }
+        return userCredential;
       }
     } catch (e,stackTrace) {
       print("ffff$e");
@@ -167,174 +163,93 @@ print(value);
       return null;
     }
   }
-  // Future<UserCredential?> signInWithFacebook() async {
-  //   providername="Facebook";
-  //   try {
-  //     final LoginResult result = await FacebookAuth.instance.login( loginBehavior: LoginBehavior.webOnly, );
-  //     print(result.status);
-  //     if (result.status == LoginStatus.success) {
-  //       print("result.");
-  //       final OAuthCredential credential = FacebookAuthProvider.credential(result.accessToken!.tokenString);
-  //       return await FirebaseAuth.instance.signInWithCredential(credential);
-  //     } else {
-  //       print("result.status");
-  //       print(result.status);
-  //       return null;
-  //     }
-  //   } catch (e) {
-  //     print("error $e");
-  //     return null;
-  //   }
-  // }
-  // Future<UserCredential?> signInWithApple() async {
-  //   providername="Apple";
-  //   try {
-  //     // final appleProvider = AppleAuthProvider();
-  //     // print(appleProvider);
-  //     // if (kIsWeb) {
-  //     //   await FirebaseAuth.instance.signInWithPopup(appleProvider);
-  //     // } else {
-  //     //   await FirebaseAuth.instance.signInWithProvider(appleProvider);
-  //     // }
-  //     final appleCredential = await SignInWithApple.getAppleIDCredential(
-  //       scopes: [AppleIDAuthorizationScopes.email, AppleIDAuthorizationScopes.fullName],
-  //     //);
-  //     webAuthenticationOptions: WebAuthenticationOptions(
-  //       clientId: 'com.example.app',  // Replace with your client ID
-  //       redirectUri: Uri.parse(
-  //         'https://your-app-url.com/callbacks/sign_in_with_apple', // Replace with your redirect URI
-  //       ),
-  //     ),
-  //   );
-  //     final OAuthCredential credential = OAuthProvider("apple.com").credential(
-  //       idToken: appleCredential.identityToken,
-  //       accessToken: appleCredential.authorizationCode,
-  //
-  //     );
-  //
-  //     return await FirebaseAuth.instance.signInWithCredential(credential);
-  //   } catch (e) {
-  //     print(e);
-  //     return null;
-  //   }
-  // }
-  Future<void> SocialGooglelogin(email,name,id) async {
-    // AppUtils.alertWithProgressBar();
-    providername="Google";
-    isLoading.value= true;
+
+  Future<UserCredential?> signInWithFacebook() async {
+    providername="Facebook";
+    try {
+      final LoginResult result = await FacebookAuth.instance.login();
+      print(result.status);
+      if (result.status == LoginStatus.success) {
+        print("result success");
+        final OAuthCredential credential = FacebookAuthProvider.credential(result.accessToken!.tokenString);
+        UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+        if (userCredential.user != null) {
+          signInWithSocial(userCredential.user!, "facebook", token: result.accessToken!.tokenString);
+        }
+        return userCredential;
+      } else {
+        print("result.status");
+        print(result.status);
+        print(result.message);
+        return null;
+      }
+    } catch (e) {
+      print("error $e");
+      return null;
+    }
+  }
+
+  Future<void> signInWithSocial(User user, String provider, {String? token, String? webEmail}) async {
+    isLoading.value = true;
+    String deviceId = await getDeviceId();
+    
     var requestBody = {
-      'name': name,
-'email':email,
-      'id':id,
-      'fmc_token':AppUtils.FcmToken
+      "device_id": deviceId,
+      "provider": provider,
+      "provider_token": token ?? "",
+      "payload": {
+        "email": webEmail ?? user.email ?? "",
+        "provider_user_id": user.uid
+      }
     };
-    await FirebaseAuth.instance.signOut();
-    await GoogleSignIn().signOut();
-    //await FacebookAuth.instance.logOut();
-    loginServices.providergoogle(body: requestBody).then((value) async {
+
+    loginServices.socialLogin(body: requestBody).then((value) async {
       isLoading.value = false;
-      if (value.status == true) {
-        if (value.registration == 1) {
-          appStorage.loggedInUser = value.data!;
-          appStorage.loggedInUserToken =value.token;
-          await appStorage.write(AppConstants.loginUserInformationToken, value.token!);
-          await appStorage.write(
-              AppConstants.loginUserInformation, appStorage.loggedInUser);
+      if (value.status == "success") {
+        if (value.apiKey != null) {
+          appStorage.loggedInUserToken = value.apiKey!;
+          await appStorage.write(AppConstants.loginUserInformationToken, value.apiKey!);
+          appStorage.loggedInUserId = value.userId;
+          await appStorage.write(AppConstants.loginUserId, value.userId);
+
+        }
+        
+        if (value.isNewUser == true) {
+          Get.toNamed(Routes.SignUpSCREEN, parameters: {
+            'provider_id': user.uid,
+            'email': webEmail ?? user.email ?? "",
+            'name': user.displayName ?? "",
+          });
+        } else {
           Get.offAllNamed(Routes.BOTTOM_NAVIGATION);
-
-
-        }
-        else if (value.registration == 1&& value.numberVerification==0) {
-          Get.toNamed(Routes.OTPSCREEN,parameters: {
-            'phoneNumber': value.data!.number.toString(),
-            'Registration': value.data!.registration.toString(),
-          });
-        }
-        else {
-          //Get.back();
-          Get.toNamed(Routes.SignUpSCREEN,parameters: {
-            'provider_id': value.data!.providerId!,
-            'email': value.data!.email!,
-            'name': value.data!.name!,
-          });
-
         }
       } else {
-        // Get.back();
-
-        AppUtils.showSnackbar(value.message.toString(),  "Info");
+        AppUtils.showSnackbar(value.message ?? "Authentication failed", "Info");
       }
     }).catchError((err) {
-      // Get.back();
       isLoading.value = false;
-      AppUtils.showSnackbar("Something went wrong","Oops");
-      //AppUtils.alert("Something went wrong", title: "Oops");
+      AppUtils.showSnackbar("Something went wrong", "Oops");
     });
   }
-  void SocialAppplelogin(email,name,id) {
-    // AppUtils.alertWithProgressBar();
-    isLoading.value= true;
-    var requestBody = {
-      'name': name,
-      'email':email,
-      'id':id
-    };
 
-    loginServices.authenticate(body: requestBody).then((value) {
-      isLoading.value = false;
-      if (value.data != null) {
-        // appStorage.loggedInUser.data?.token = value.data;
-        // appStorage.loggedInUserToken = value.data!;
-        // appStorage.write(AppConstants.loginUserInformationToken, value.data!);
-        // fetchUserInformation(token: value.data);
-        // Get.toNamed(Routes.OTPSCREEN,parameters: {
-        //   'phoneNumber': phonenumber,
-        //   'Registration': value.Registration,
-        // });
-      } else {
-        // Get.back();
-
-        AppUtils.showSnackbar(value.message.toString(),  "Info");
+  Future<String> getDeviceId() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    if (kIsWeb) {
+      WebBrowserInfo webBrowserInfo = await deviceInfo.webBrowserInfo;
+      return webBrowserInfo.userAgent ?? "web";
+    } else {
+      if (Platform.isAndroid) {
+        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+        return androidInfo.id;
+      } else if (Platform.isIOS) {
+        IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+        return iosInfo.identifierForVendor ?? "ios";
       }
-    }).catchError((err) {
-      // Get.back();
-      isLoading.value = false;
-      AppUtils.showSnackbar("Something went wrong","Oops");
-      //AppUtils.alert("Something went wrong", title: "Oops");
-    });
+    }
+    return "unknown";
   }
-  void SocialFacebooklogin(email,name,id) {
-    // AppUtils.alertWithProgressBar();
-    isLoading.value= true;
-    var requestBody = {
-      'name': name,
-      'email':email,
-      'id':id
-    };
 
-    loginServices.authenticate(body: requestBody).then((value) {
-      isLoading.value = false;
-      if (value.data != null) {
-        // appStorage.loggedInUser.data?.token = value.data;
-        // appStorage.loggedInUserToken = value.data!;
-        // appStorage.write(AppConstants.loginUserInformationToken, value.data!);
-        // fetchUserInformation(token: value.data);
-        // Get.toNamed(Routes.S,parameters: {
-        //   'phoneNumber': phonenumber,
-        //   'Registration': value.Registration,
-        // });
-      } else {
-        // Get.back();
 
-        AppUtils.showSnackbar(value.message.toString(),  "Info");
-      }
-    }).catchError((err) {
-      // Get.back();
-      isLoading.value = false;
-      AppUtils.showSnackbar("Something went wrong","Oops");
-      //AppUtils.alert("Something went wrong", title: "Oops");
-    });
-  }
 }
 class PigeonUserDetails {
   final String? id;

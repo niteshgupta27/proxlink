@@ -8,6 +8,7 @@ import 'AppConstants.dart';
 class AppStorage extends GetxService {
    UserData loggedInUser = UserData();
   String loggedInUserToken = '';
+  int? loggedInUserId;
    String loggedInUserReferalContain = '';
    String productheadColor = '#ffe2e2e';
 String serviceheadColor = '#ffe2e2e';
@@ -40,9 +41,11 @@ String navigationurl="";
   resetStorage() {
      loggedInUser = UserData();
     loggedInUserToken = '';
+    loggedInUserId = null;
 
     GetStorage().remove(AppConstants.loginUserInformation);
     GetStorage().remove(AppConstants.loginUserInformationToken);
+    GetStorage().remove(AppConstants.loginUserId);
      GetStorage().remove(AppConstants.cartList);
      GetStorage().remove(AppConstants.AddressList);
      GetStorage().remove(AppConstants.Referalcontent);
