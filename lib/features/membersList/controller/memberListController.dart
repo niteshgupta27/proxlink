@@ -2,29 +2,63 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import '../../../Utill/AppConstants.dart';
+import '../../../Utill/Apputills.dart';
 import '../../../Utill/app_required.dart';
 import '../../../Utill/app_storage.dart';
+import '../../discovery/model/discovery_Model.dart';
 import '../model/NetworkModel.dart';
+import '../service/memberService.dart';
 
 
 class MemberListController extends GetxController {
   String TAG = "SplashController";
-  var networks = <NetworkModel>[].obs;
+  var networks = <GroupedUser>[].obs;
+  RxString networkId = ''.obs;
+  var isLoading = false.obs;
+  final Memberserviceservice _eventService = Memberserviceservice();
+  final appStorage = Get.find<AppStorage>();
+  var view_as = ''.obs;
 
   @override
   void onInit() {
     super.onInit();
-    fetchNetworks();
+    final argument =Get.arguments;
+    if(argument != null){
+      networkId.value=argument['network_id'].toString();
+      view_as.value=argument['view_as'];
+      List_event();
+    }
+
   }
 
-  void fetchNetworks() {
-    // Simulating data fetch from an API
-    var serverData = List.generate(6, (index) => NetworkModel(
-      title: "Sheraton - Google dev summit",
-      imageUrl: "https://via.placeholder.com/150", // Replace with your image link
-      memberCount: 20,
-    ));
-    networks.assignAll(serverData);
+
+  Future<void> List_event() async {
+    isLoading.value = true;
+    // DialogHelper.showLoading();
+
+
+    final body = {
+      "api_key": appStorage.loggedInUserToken,
+      "user_id": appStorage.loggedInUserId?.toString() ?? "0",
+      "payload": {
+        "network_id": networkId.value,
+        "view_as": view_as.value
+      }
+    };
+
+    _eventService.getevents(body: body).then((value) async {
+      isLoading.value = false;
+      if (value.status == "success") {
+
+networks.value=value.groupedUsers;
+
+      } else {
+        AppUtils.showSnackbar( "Authentication failed", "Info");
+      }
+    }).catchError((err) {
+      isLoading.value = false;
+      AppUtils.showSnackbar("Something went wrong", "Oops");
+    });
   }
 
 }

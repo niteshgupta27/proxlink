@@ -5,6 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get_connect/connect.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -16,6 +17,7 @@ import 'package:proxlink/routes/app_pages.dart';
 
 import 'Utill/AppConstants.dart';
 import 'Utill/ResponsiveView.dart';
+import 'Utill/app_colors.dart';
 import 'Utill/app_storage.dart';
 import 'Utill/app_theme.dart';
 
@@ -42,6 +44,20 @@ class _ProxlinkAppState extends State<ProxlinkApp> {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.sizeOf(context);
 
+    // // Apply Status bar configuration
+    // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    //   statusBarColor: AppColors.primaryColor, // Android status bar color
+    //   statusBarIconBrightness: Brightness.light, // Android status bar icons
+    //   statusBarBrightness: Brightness.dark, // iOS status bar icons
+    // ));
+    // Explicitly set both Status Bar and Navigation Bar styles
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: AppColors.primaryColor,
+      statusBarIconBrightness: Brightness.light, // White icons for Android status bar
+      statusBarBrightness: Brightness.dark,      // White icons for iOS status bar
+      systemNavigationBarColor: AppColors.primaryColor, // Matching color for navigation bar
+      systemNavigationBarIconBrightness: Brightness.light, // White icons for navigation bar
+    ));
     return MediaQuery(
       data: MediaQuery.of(context)
           .copyWith(textScaler: TextScaler.linear(size.width < 380 ? 0.8 : 1)),

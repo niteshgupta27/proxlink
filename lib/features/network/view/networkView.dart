@@ -150,7 +150,7 @@ class NetworkView extends GetView<NetworkController> {
         child: RichText(
           text: TextSpan(
             style: TextStyle(color: AppColors.whites,fontFamily: AppConstants.fontFamily_Acre,
-                fontSize: 14,
+                fontSize: 16,
                 fontWeight: FontWeight.normal),
             children: [
               TextSpan(text: title.split(" ").sublist(0, title.split(" ").length - 1).join(" ") + " "),
@@ -183,7 +183,7 @@ class NetworkView extends GetView<NetworkController> {
             ),
             // Icon(icon, color: AppColors.primaryColor, size: 28),
             SizedBox(width: 15),
-            Expanded(child: Text(title, style: TextStyle(fontSize: 16,fontFamily: AppConstants.fontFamily_Acre,
+            Expanded(child: Text(title, style: TextStyle(fontSize: 18,fontFamily: AppConstants.fontFamily_Acre,
 
                 fontWeight: FontWeight.w500))),
             Container(
@@ -193,14 +193,24 @@ class NetworkView extends GetView<NetworkController> {
             )
           ],
         ),
-      ),onTap: (){
+      ),onTap: () async {
         if(Actioncode=="0"){
           _showCustomBottomSheet(Get.context!);
         }else if(Actioncode=="1"){
-          Get.toNamed(Routes.memebersList);
+          Get.toNamed(Routes.EventList,arguments: {"view_as":"GUEST"});
+
 
         }else if(Actioncode=="2"){
-          Get.toNamed(Routes.Addevent);
+          var result = await Get.toNamed(Routes.Addevent);
+if(result !=null){
+  String network_id=result['network_id'];
+  String network_name=result['network_name'];
+print(network_name);
+  Get.toNamed(Routes.shearqr,arguments: {"network_id":network_id,"network_name":network_name});
+}
+        }
+        else if(Actioncode=="3"){
+          Get.toNamed(Routes.EventList,arguments: {"view_as":"HOST"});
 
         }
       },);
@@ -256,8 +266,14 @@ class NetworkView extends GetView<NetworkController> {
                 width: double.infinity,
                 height: 52,
                 child: ElevatedButton(
-                  onPressed: (){
+                  onPressed: () async {
                     Get.back();
+                    final result = await Get.toNamed(Routes.QRScanner);
+                    if (result != null) {
+                       // Handle scanned result
+                      controller.joinNetwork(result);
+                       debugPrint("Scanned Result: $result");
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.darkBlue,
@@ -266,7 +282,7 @@ class NetworkView extends GetView<NetworkController> {
                     ),
                   ),
                   child: const Text("Scan to join the network", style:
-                  const TextStyle(fontSize:18, fontWeight: FontWeight.bold,fontFamily: AppConstants.fontFamily_Acre)),
+                  const TextStyle(fontSize:18, color: Colors.white, fontWeight: FontWeight.bold,fontFamily: AppConstants.fontFamily_Acre)),
                 ),
               ),
             ),
@@ -276,4 +292,4 @@ class NetworkView extends GetView<NetworkController> {
       ),
     );
   }
-  }
+}

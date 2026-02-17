@@ -71,7 +71,7 @@ String providername="";
     if (phonenumber != "" && RegExp(AppConstants.phonenoExp)
         .hasMatch(phonenumber)) {
       if (await AppUtils.checkInternetConnectivity()) {
-      login(phonenumber);
+     // login(phonenumber);
     }else {
         AppUtils.showSnackbar("Please check Internet connection", "Info");
       }
@@ -79,35 +79,6 @@ String providername="";
       AppUtils.showSnackbar("Please enter a valid Phone Number.", "Info");
       //Show error
     }
-  }
-  void login(phonenumber) {
-   // AppUtils.alertWithProgressBar();
-    isLoading.value= true;
-    var requestBody = {
-      'number': phonenumber,
-
-    };
-
-    loginServices.authenticate(body: requestBody).then((value) {
-      isLoading.value = false;
-      if (value.data != null) {
-print(value);
-        Get.toNamed(Routes.OTPSCREEN,parameters: {
-          'phoneNumber': phonenumber,
-          'Registration': value.Registration.toString(),
-
-        },arguments:{'otp': value.data["otp"].toString(),} );
-      } else {
-       // Get.back();
-
-        AppUtils.showSnackbar(value.message.toString(),  "Info");
-      }
-    }).catchError((err) {
-     // Get.back();
-      isLoading.value = false;
-      AppUtils.showSnackbar("Something went wrong","Oops");
-      //AppUtils.alert("Something went wrong", title: "Oops");
-    });
   }
   Future<UserCredential?> signInWithGoogle() async {
     providername = "Google";
@@ -206,21 +177,40 @@ print(value);
     loginServices.socialLogin(body: requestBody).then((value) async {
       isLoading.value = false;
       if (value.status == "success") {
-        if (value.apiKey != null) {
-          appStorage.loggedInUserToken = value.apiKey!;
-          await appStorage.write(AppConstants.loginUserInformationToken, value.apiKey!);
-          appStorage.loggedInUserId = value.userId;
-          await appStorage.write(AppConstants.loginUserId, value.userId);
-
-        }
+        // if (value.apiKey != null) {
+           appStorage.loggedInUserToken = value.apiKey!;
+        //   await appStorage.write(AppConstants.loginUserInformationToken, value.apiKey!);
+           appStorage.loggedInUserId = value.userId;
+        //   await appStorage.write(AppConstants.loginUserId, value.userId);
+          await appStorage.write('current_lat', 0.0);
+           await appStorage.write('current_lng', 0.0);
+        //
+        // }
         
         if (value.isNewUser == true) {
+          appStorage.loggedInUserToken = value.apiKey!;
+          //   await appStorage.write(AppConstants.loginUserInformationToken, value.apiKey!);
+          appStorage.loggedInUserId = value.userId;
+          //   await appStorage.write(AppConstants.loginUserId, value.userId);
+          await appStorage.write('current_lat', 0.0);
+          await appStorage.write('current_lng', 0.0);
           Get.toNamed(Routes.SignUpSCREEN, parameters: {
             'provider_id': user.uid,
             'email': webEmail ?? user.email ?? "",
             'name': user.displayName ?? "",
           });
         } else {
+          appStorage.loggedInUserToken = value.apiKey!;
+             await appStorage.write(AppConstants.loginUserInformationToken, value.apiKey!);
+          appStorage.loggedInUserId = value.userId;
+             await appStorage.write(AppConstants.loginUserId, value.userId);
+          await appStorage.write('current_lat', 0.0);
+          await appStorage.write('current_lng', 0.0);
+          // Get.toNamed(Routes.SignUpSCREEN, parameters: {
+          //   'provider_id': user.uid,
+          //   'email': webEmail ?? user.email ?? "",
+          //   'name': user.displayName ?? "",
+          // });
           Get.offAllNamed(Routes.BOTTOM_NAVIGATION);
         }
       } else {

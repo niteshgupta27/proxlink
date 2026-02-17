@@ -86,7 +86,15 @@ class SignUpView extends GetView<SignUpController> {
                           ),
 
                           _label("What do you do? *"),
-                          _infoBox(),
+                          _infoBox(
+                            controller.professionCtrl,
+                            "",
+                            maxLength: 20,
+                            validator: (v) => (v == null || v.isEmpty) ? "This field is required" : null,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9 ,.\-]')),
+                            ],
+                          ),
 
                           _label("Name *"),
                           _textField(
@@ -101,8 +109,14 @@ class SignUpView extends GetView<SignUpController> {
                             controller.ageCtrl,
                             "25",
                             keyboard: TextInputType.number,
-                            validator: (v) =>
-                            v!.isEmpty ? "Age required" : null,
+                            validator: (v) {
+                              if (v == null || v.isEmpty) return "Age required";
+                              final age = int.tryParse(v);
+                              if (age == null || age < 10 || age > 100) {
+                                return "Age must be between 10 and 100";
+                              }
+                              return null;
+                            },
                           ),
 
                           _label("Gender *"),
@@ -177,13 +191,29 @@ class SignUpView extends GetView<SignUpController> {
     );
   }
 
-  Widget _infoBox() {
+  Widget _infoBox( TextEditingController ctrl,
+      String hint, {
+        TextInputType keyboard = TextInputType.text,
+        String? Function(String?)? validator,
+        List<TextInputFormatter>? inputFormatters,
+        int? maxLength,
+      }) {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: _box(),
-      child: const Text(
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-        style: TextStyle(fontSize: 14,fontFamily: AppConstants.fontFamily_Acre,fontWeight: FontWeight.normal),
+      child: TextFormField(
+        controller: ctrl,
+        keyboardType: keyboard,
+        validator: validator,
+        inputFormatters: inputFormatters,
+        maxLength: maxLength,
+        decoration: InputDecoration(
+          hintText: hint,
+          border: InputBorder.none,
+          counterText: "",
+          contentPadding:
+          const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        ),style: TextStyle(fontFamily: AppConstants.fontFamily_Acre,fontWeight: FontWeight.normal),
       ),
     );
   }

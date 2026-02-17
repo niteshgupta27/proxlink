@@ -1,29 +1,26 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:proxlink/features/discovery/controller/discoveryController.dart';
 
 import '../../../Utill/AppConstants.dart';
-import '../../../Utill/Images.dart';
 import '../../../Utill/app_colors.dart';
-import '../../../Utill/app_required.dart';
 import '../../../common/widget/custom_loader_widget.dart';
 import '../../../routes/app_pages.dart';
 import '../../membersList/model/NetworkModel.dart';
-import '../controller/AddeventController.dart';
+import '../controller/eventlistController.dart';
 
-class AddeventView extends GetView<AddeventController> {
-  const AddeventView({super.key});
+
+class EventListview extends GetView<EventListController> {
+  const EventListview({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.whites,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: AppColors.primaryColor,
         elevation: 0,
+        toolbarHeight: 80,
+        leadingWidth: 70,
         leading: Center(
           child: InkWell(
             onTap: () => Get.back(),
@@ -37,148 +34,48 @@ class AddeventView extends GetView<AddeventController> {
               child: const Icon(
                 Icons.arrow_back_ios_new,
                 color: AppColors.primaryColor,
+                size: 20,
               ),
             ),
           ),
         ),
         title: const Text(
-          "Create a Network/Event",
+          "Members",
           style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              fontFamily: AppConstants.fontFamily_Acre,
-              color: AppColors.whites),
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            fontFamily: AppConstants.fontFamily_Acre,
+            color: Colors.white,
+          ),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildInputSection(),
-            const SizedBox(height: 30),
-            const Text(
-              "Previously hosted Networks/Events",
+      body: Column(
+        children: [
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 25),
+            child: Text(
+              "Select a network to view members",
               style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: AppConstants.fontFamily_Acre,
-                  color: AppColors.black),
-            ),
-            const SizedBox(height: 15),
-            _buildPreviousEventsList(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInputSection() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(25),
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
-      ),
-      child: Form(
-        key: controller.formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("Network/Event Name",
-                style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: AppConstants.fontFamily_Acre,
-                    color: AppColors.black)),
-            const SizedBox(height: 8),
-            TextFormField(
-                onChanged: (val) => controller.eventName.value = val,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter event name';
-                  }
-                  return null;
-                },
-                decoration: InputDecoration(
-                  hintText: "Type here...",
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                ),
-                style: const TextStyle(
-                    fontFamily: AppConstants.fontFamily_Acre,
-                    fontWeight: FontWeight.normal)),
-            const SizedBox(height: 20),
-            const Text("Description",
-                style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: AppConstants.fontFamily_Acre,
-                    color: AppColors.black)),
-            const SizedBox(height: 8),
-            TextFormField(
-                maxLines: 4,
-                onChanged: (val) => controller.description.value = val,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter description';
-                  }
-                  return null;
-                },
-                decoration: InputDecoration(
-                  hintText: "Type here...",
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                ),
-                style: const TextStyle(
-                    fontFamily: AppConstants.fontFamily_Acre,
-                    fontWeight: FontWeight.normal)),
-            const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: Obx(() => ElevatedButton(
-                      onPressed: controller.isLoading.value
-                          ? null
-                          : () {
-                              controller.createEvent();
-                            },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      child: controller.isLoading.value
-                          ? const CircularProgressIndicator(color: Colors.white)
-                          : const Text("Create",
-                              style: TextStyle(
-                                  fontSize: 22,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: AppConstants.fontFamily_Acre)),
-                    )),
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
+                fontFamily: AppConstants.fontFamily_Acre,
+                color: Colors.black,
               ),
             ),
-          ],
-        ),
+          ),
+          Expanded(
+            child: Obx(() => controller.isLoading ==true? Center(child: CustomLoaderWidget(color:AppColors.primaryColor ,)):ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemCount: controller.networks.length,
+              itemBuilder: (context, index) {
+                return _buildNetworkCard(controller.networks[index]);
+              },
+            )
+            ),
+          ),
+        ],
       ),
     );
-  }
-
-  Widget _buildPreviousEventsList() {
-    return Obx(() => ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      itemCount: controller.networks.length,
-      itemBuilder: (context, index) {
-        return _buildNetworkCard(controller.networks[index]);
-      },
-    ));
   }
 
   Widget _buildNetworkCard(NetworkModel network) {
@@ -326,8 +223,8 @@ class AddeventView extends GetView<AddeventController> {
           ),
         ],
       ),
-    ),onTap:(){
-      Get.toNamed(Routes.shearqr,arguments: {"network_id":network.networkId.toString(),"network_name":network.name});
+    ),onTap: (){
+      Get.toNamed(Routes.memebersList,arguments: {"network_id":network.networkId,"view_as":controller.view_as.value});
     },);
   }
 }

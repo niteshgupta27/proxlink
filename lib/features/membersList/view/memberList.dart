@@ -1,22 +1,13 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:get/get_state_manager/src/simple/get_view.dart';
-import 'package:proxlink/features/discovery/controller/discoveryController.dart';
 
 import '../../../Utill/AppConstants.dart';
 import '../../../Utill/Images.dart';
 import '../../../Utill/app_colors.dart';
-import '../../../Utill/app_required.dart';
-import '../../../common/widget/custom_loader_widget.dart';
+import '../../discovery/model/discovery_Model.dart';
 import '../controller/memberListController.dart';
 import '../model/NetworkModel.dart';
-
-
 
 class MemberListview extends GetView<MemberListController> {
   const MemberListview({super.key});
@@ -26,123 +17,93 @@ class MemberListview extends GetView<MemberListController> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor:AppColors.primaryColor,
+        backgroundColor: AppColors.primaryColor,
         elevation: 0,
+        toolbarHeight: 80,
+        leadingWidth: 70,
         leading: Center(
           child: InkWell(
             onTap: () => Get.back(),
             child: Container(
-              width: 40,  // Increased size; 16 is too small for a finger tap
+              width: 40,
               height: 40,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
-                Icons.arrow_back_ios_new, // "new" version is more centered
+                Icons.arrow_back_ios_new,
                 color: AppColors.primaryColor,
-               // size: 18, // Smaller icon inside the box
+                size: 20,
               ),
             ),
           ),
         ),
-        title: Text("Members", style: TextStyle(fontSize:22, fontWeight: FontWeight.bold,fontFamily: AppConstants.fontFamily_Acre,color: AppColors.whites)),
+        title: Text(
+          "Members",
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            fontFamily: AppConstants.fontFamily_Acre,
+            color: Colors.white,
+          ),
+        ),
       ),
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 30),
+            padding: const EdgeInsets.symmetric(vertical: 25),
             child: Text(
               "Select a network to view members",
-              style: TextStyle(fontSize:22, fontWeight: FontWeight.bold,fontFamily: AppConstants.fontFamily_Acre,color: AppColors.black),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                fontFamily: AppConstants.fontFamily_Acre,
+                color: Colors.black,
+              ),
             ),
           ),
           Expanded(
-            child: Obx(() => GridView.builder(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 15,
-                mainAxisSpacing: 15,
-                childAspectRatio: 0.85,
-              ),
-              itemCount: controller.networks.length,
-              itemBuilder: (context, index) {
-                return _buildNetworkCard(controller.networks[index]);
-              },
-            )),
+            child: Obx(() => ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: controller.networks.length,
+                  itemBuilder: (context, index) {
+                    return _contactCard(controller.networks[index]);;
+                  },
+                )),
           ),
         ],
       ),
     );
   }
-
-  Widget _buildNetworkCard(NetworkModel network) {
+  Widget _contactCard(GroupedUser user) {
     return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(30),
-        boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 10, spreadRadius: 1),
-        ],
+        border: Border.all(color: Colors.grey.shade200),
+        borderRadius: BorderRadius.circular(15),
       ),
-      child: Column(
+      child: Row(
         children: [
-          // Blue Header with Profile Image
-          Stack(
-            alignment: Alignment.bottomCenter,
-            clipBehavior: Clip.none,
-            children: [
-              Container(
-                height: 60,
-                decoration: BoxDecoration(
-                  color: AppColors.primaryColor,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30),
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: -25,
-                child: CircleAvatar(
-                  radius: 35,
-                  backgroundColor: Colors.white,
-                  child: CircleAvatar(
-                    radius: 32,
-                    backgroundImage: NetworkImage(network.imageUrl),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 35),
-          // Title
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Text(
-              network.title,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14,fontFamily: AppConstants.fontFamily_Acre),
-            ),
-          ),
-          Spacer(),
-          // Footer
-          Padding(
-            padding: const EdgeInsets.only(bottom: 15),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SvgPicture.asset(
-                  Images.people_outline,
-                  width: 24,
-                  height: 24,
-                ),
-                SizedBox(width: 5),
-                Text("${network.memberCount} Members", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12,fontFamily: AppConstants.fontFamily_Acre)),
+                Text(user.name, style: const TextStyle(color: AppColors.black,fontFamily: AppConstants.fontFamily_Acre,fontSize: 18,fontWeight: FontWeight.w600)),
+                Text(user.profession, style: const TextStyle(color: AppColors.black,fontFamily: AppConstants.fontFamily_Acre,fontSize: 14,fontWeight: FontWeight.normal)),
               ],
             ),
           ),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+                color: AppColors.primaryColor.withOpacity(0.3),
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.circular(5.0)
+            ),
+            child: SvgPicture.asset(Images.chatsheet,),
+          )
         ],
       ),
     );

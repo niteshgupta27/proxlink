@@ -10,17 +10,11 @@ class AppStorage extends GetxService {
   String loggedInUserToken = '';
   int? loggedInUserId;
    String loggedInUserReferalContain = '';
-   String productheadColor = '#ffe2e2e';
-String serviceheadColor = '#ffe2e2e';
-String AmcHeaderColor = '#079AC2';
-//String FcmToken = '';
-String SplashPath = '';
-String SplashTime = '';
-String loginTime='';
-String refralcode="";
 
-RxBool showdownloadApp=true.obs;
-String navigationurl="";
+//String FcmToken = '';
+RxDouble current_lat = 0.0.obs;
+  RxDouble current_lng = 0.0.obs;
+
   Future<AppStorage> init() async {
     await GetStorage.init();
     return this;

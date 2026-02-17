@@ -11,7 +11,7 @@ class AuthServices {
 
   Future<LoginResponse> authenticate({body}) async {
     try {
-      final response = await BaseClient.sharedClient.postPreLogin(
+      final response = await BaseClient.sharedClient.postRequest(
         endPoint: AppConstants.login,
         body: body,
       );
@@ -39,9 +39,9 @@ class AuthServices {
   }
   Future<OtpResponse> register({body}) async {
     try {
-      final response = await BaseClient.sharedClient.putRequest(
+      final response = await BaseClient.sharedClient.postRequest(
         endPoint: AppConstants.register,
-        payloadObj: body,
+        body: body,
       );
       // print("response=====$response");
       print("response=====$response");
@@ -51,39 +51,12 @@ class AuthServices {
       rethrow;
     }
   }
-  Future<SocialResponse> providergoogle({body}) async {
-    try {
-      final response = await BaseClient.sharedClient.postPreLogin(
-        endPoint: AppConstants.providergoogle,
-        body: body,
-      );
-      // print("response=====$response");
-      print("response=====$response");
-      return SocialResponse.fromJson(response as Map<String, dynamic>);
-    } catch (exception) {
-      print("response=====$exception");
-      rethrow;
-    }
-  }
 
-  Future<SocialResponse> providerfacebook({body}) async {
-    try {
-      final response = await BaseClient.sharedClient.postPreLogin(
-        endPoint: AppConstants.providerfacebook,
-        body: body,
-      );
-      print("response=====$response");
-      return SocialResponse.fromJson(response as Map<String, dynamic>);
-    } catch (exception) {
-      print("response=====$exception");
-      rethrow;
-    }
-  }
 
   Future<SocialResponse> socialLogin({body}) async {
     try {
       print(body);
-      final response = await BaseClient.sharedClient.postPreLogin(
+      final response = await BaseClient.sharedClient.postRequest(
         endPoint: AppConstants.social_login,
         body: body,
       );

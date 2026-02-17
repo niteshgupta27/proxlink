@@ -1,5 +1,5 @@
 class OtpResponse {
-  bool status;
+  String status;
   String message;
   UserData data;
   String token;

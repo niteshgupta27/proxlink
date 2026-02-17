@@ -1,8 +1,6 @@
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import '../utill/app_colors.dart';
+import 'package:flutter/services.dart';
+import '../Utill/app_colors.dart';
 import 'AppConstants.dart';
 
 class AppTheme {
@@ -11,14 +9,22 @@ class AppTheme {
       fontFamily: AppConstants.fontFamily_Acre,
       primaryColor: AppColors.primaryColor,
       useMaterial3: false,
-      appBarTheme: const AppBarTheme(elevation: 5.0,centerTitle: true,color: AppColors.primaryColor),
+      appBarTheme: const AppBarTheme(
+        elevation: 5.0,
+        centerTitle: true,
+        backgroundColor: AppColors.primaryColor,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: AppColors.primaryColor, // Android
+          statusBarIconBrightness: Brightness.light, // Android icons
+          statusBarBrightness: Brightness.dark, // iOS icons
+        ),
+      ),
       visualDensity: VisualDensity.adaptivePlatformDensity,
       pageTransitionsTheme: const PageTransitionsTheme(builders: {
         TargetPlatform.android: ZoomPageTransitionsBuilder(),
         TargetPlatform.iOS: ZoomPageTransitionsBuilder(),
         TargetPlatform.fuchsia: ZoomPageTransitionsBuilder(),
       }),
-      // TODO FOR BUTTON GLOBALLY decoration
       colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(

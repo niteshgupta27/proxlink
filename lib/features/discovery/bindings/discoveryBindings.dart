@@ -4,6 +4,7 @@ import 'package:get/get_instance/src/bindings_interface.dart';
 
 import '../../../Utill/app_required.dart';
 import '../controller/discoveryController.dart';
+import '../services/discoveryService.dart';
 
 
 class DiscoveryBindings extends Bindings {
@@ -11,6 +12,9 @@ class DiscoveryBindings extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<DiscoveryController>(() => DiscoveryController());
+    Get.lazyPut<Discoveryservice>(
+          () => Discoveryservice(),
+    );
   }
 
 }

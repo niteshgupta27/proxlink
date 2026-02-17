@@ -1,10 +1,14 @@
-
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:proxlink/features/auth/Otp/view/Otpview.dart';
 import 'package:proxlink/features/auth/signup/view/SignUpView.dart';
 import 'package:proxlink/features/bottomNavigation/bindings/BottomNavigationBindings.dart';
 import 'package:proxlink/features/event/bindings/AddeventBindings.dart';
 import 'package:proxlink/features/event/view/AddeventView.dart';
+import 'package:proxlink/features/event/view/eventListView.dart';
+import 'package:proxlink/features/job/bindings/JobBindings.dart';
+import 'package:proxlink/features/job/view/jobView.dart';
+import 'package:proxlink/features/network/bindings/networkBindings.dart';
+import 'package:proxlink/features/network/view/QRScannerView.dart';
 
 import '../Utill/ErrorView.dart';
 import '../Utill/app_required.dart';
@@ -13,6 +17,7 @@ import '../features/auth/Login/view/login_view.dart';
 import '../features/bottomNavigation/views/bottom_navigation_view.dart';
 import '../features/membersList/bindings/memberListBindings.dart';
 import '../features/membersList/view/memberList.dart';
+import '../features/network/view/ShareQRView.dart';
 import '../features/splash/view/SplashView.dart';
 
 
@@ -58,9 +63,28 @@ class AppPages {
       binding: MemberListBindings(),
     ),
     GetPage(
+      name: _Paths.EventList,
+      page: () => EventListview(),
+      binding: AddeventBindings(),
+    ),
+    GetPage(
       name: _Paths.Addevent,
       page: () => AddeventView(),
       binding: AddeventBindings(),
+    ),
+    GetPage(
+      name: _Paths.QRScanner,
+      page: () => const QRScannerView(),
+    ),
+    GetPage(
+      name: _Paths.Job,
+      page: () => const JobView(),
+      binding: JobBindings(),
+    ),
+    GetPage(
+      name: _Paths.shearqr,
+      page: () => ShareQRView(),
+      binding: NetworkBindings(),
     ),
   ];
 
