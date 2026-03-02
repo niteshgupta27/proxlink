@@ -21,6 +21,8 @@ abstract class Routes {
 static const EventList=_Paths.EventList;
 static const QRScanner = _Paths.QRScanner;
   static const shearqr = _Paths.shearqr;
+  static const post_job = _Paths.post_job;
+  static const job_filtter = _Paths.job_filtter;
 
 }
 
@@ -41,8 +43,8 @@ abstract class _Paths {
 
   static const QRScanner = "/qr_scanner";
  static const shearqr = '/shearqr';
-// static const ServiceCategory = '/ServiceCategory';
-// static const ServiceSubCategory = '/ServiceSubCategoryView';
+ static const post_job = '/post_job';
+ static const job_filtter = '/job_filtter';
 // static const CategoryProducts = '/categoryProducts';
 // static const SubCategoryProducts = '/subcategoryProducts';
 // static const Checkout = '/Checkout';

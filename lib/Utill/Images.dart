@@ -10,6 +10,8 @@ class Images {
   static const String splash = 'assets/images/splash.png';
   static const String Jobs = 'assets/svg/jobs.svg';
   static const String Network = 'assets/svg/network.svg';
+  static const String Zone = 'assets/svg/zone.svg';
+
   static const String chat = 'assets/svg/chat.svg';
 
   static const String Discover = 'assets/svg/discover.svg';

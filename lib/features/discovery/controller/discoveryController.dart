@@ -1,32 +1,30 @@
 import 'dart:async';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' hide Cluster;
-import 'package:proxlink/LocationService.dart';
-import 'package:proxlink/Utill/AppConstants.dart';
 import 'package:proxlink/Utill/app_colors.dart';
 import 'package:proxlink/Utill/app_storage.dart';
 import 'package:proxlink/features/discovery/model/discovery_Model.dart';
 import 'package:proxlink/features/discovery/services/discoveryService.dart';
-import 'package:proxlink/features/network/controller/NetworkController.dart';
+import 'package:proxlink/Utill/Apputills.dart';
 
-import '../../../Utill/Apputills.dart';
-import '../../../main.dart';
 import '../view/discoveryView.dart';
 
 class DiscoveryController extends GetxController {
   final appStorage = Get.find<AppStorage>();
   final discoveryservice = Get.find<Discoveryservice>();
 
+  GoogleMapController? mapController;
+
   // Observables for UI state
   var markers = <Marker>{}.obs;
   var selectedMarkerId = "".obs;
   var isLoading = false.obs;
+  var isLocationReady = false.obs;
+  LatLng? initialLatLng;
 
   // Data sets
   RxList<Cluster> clusterList = <Cluster>[].obs;
@@ -39,45 +37,69 @@ class DiscoveryController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    
+    // Check if location is already available in storage
+    if (appStorage.current_lat.value != 0.0) {
+      initialLatLng = LatLng(appStorage.current_lat.value, appStorage.current_lng.value);
+      isLocationReady.value = true;
+      _initData();
+    }
+    
     _handleLocationAndService();
-    _initData();
     _setupSearchDebounce();
+    
+    // Listen to location changes and update map position & data
+    everAll([appStorage.current_lat, appStorage.current_lng], (_) {
+      if (mapController != null) {
+        mapController!.animateCamera(CameraUpdate.newLatLng(
+          LatLng(appStorage.current_lat.value, appStorage.current_lng.value),
+        ));
+      }
+      if (isLocationReady.value) {
+        _initData();
+      }
+    });
   }
 
-  /// Check permission and start service
+  void onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+  }
+
+  /// Check permission and handle location
   Future<void> _handleLocationAndService() async {
     bool serviceEnabled;
     LocationPermission permission;
 
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      AppUtils.showSnackbar("Location services are disabled.", "Info");
-      return;
-    }
+    if (!serviceEnabled) return;
 
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        AppUtils.showSnackbar("Location permissions are denied", "Error");
-        return;
+      if (permission == LocationPermission.denied) return;
+    }
+
+    if (permission == LocationPermission.deniedForever) return;
+
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      
+      // If we didn't have location yet, set it as initial
+      if (!isLocationReady.value) {
+        initialLatLng = LatLng(position.latitude, position.longitude);
+        appStorage.current_lng.value = position.longitude;
+        appStorage.current_lat.value = position.latitude;
+        isLocationReady.value = true;
+        _initData();
+      } else {
+        appStorage.current_lng.value = position.longitude;
+        appStorage.current_lat.value = position.latitude;
       }
+    } catch (e) {
+      debugPrint("Error getting location: $e");
     }
-
-    if (permission == LocationPermission.deniedForever) {
-      AppUtils.showSnackbar("Location permissions are permanently denied", "Error");
-      return;
-    }
-
-    // If we have permission, initialize and start the service
-    await initializeService();
-    Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-     // timeLimit: const Duration(seconds: 10),
-    );
-    appStorage.current_lng.value=position.longitude;
-    appStorage.current_lat.value=position.latitude;
-    _initData();
   }
 
   /// Initial data load
@@ -85,21 +107,15 @@ class DiscoveryController extends GetxController {
     fetchDiscoveryUsers(
       lat: appStorage.current_lat.value,
       lng: appStorage.current_lng.value,
+      profession: searchProfession.value,
     );
   }
 
-  /// Manages the debounced search logic in a separate function
+  /// Manages the debounced search logic
   void _setupSearchDebounce() {
-    String search=searchTextController.value.text.toString();
-    if(search.length>3) {
-      debounce(searchProfession, (_) {
-        fetchDiscoveryUsers(
-          lat: appStorage.current_lat.value,
-          lng: appStorage.current_lng.value,
-          profession: searchProfession.value,
-        );
-      }, time: const Duration(seconds: 1));
-    }
+    debounce(searchProfession, (String value) {
+      _initData();
+    }, time: const Duration(milliseconds: 800));
   }
 
   /// Main function to fetch discovery data and handle state
@@ -128,23 +144,26 @@ class DiscoveryController extends GetxController {
 
     try {
       final response = await discoveryservice.getDiscovery(body: body);
-      _handleDiscoveryResponse(response);
+      await _handleDiscoveryResponse(response);
     } catch (err) {
       isLoading.value = false;
-      AppUtils.showSnackbar("Something went wrong: $err", "Oops");
+      debugPrint("Discovery fetch error: $err");
     }
   }
 
   /// Handles the response dataset and updates state
-  void _handleDiscoveryResponse(DiscoveryModelResponse response) {
-    isLoading.value = false;
+  Future<void> _handleDiscoveryResponse(DiscoveryModelResponse response) async {
+   markers.value= <Marker>{};
     if (response.status == "success") {
       clusterList.value = response.clusters;
       groupedUsers.value = response.groupedUsers;
-      updateMarkers();
+      await updateMarkers();
     } else {
+      Set<Marker> newMarkers = {};
+markers.assignAll(newMarkers);
       AppUtils.showSnackbar("Failed to fetch discovery data", "Info");
     }
+    isLoading.value = false;
   }
 
   /// Updates map markers based on current cluster dataset
@@ -165,13 +184,14 @@ class DiscoveryController extends GetxController {
           icon: icon,
           onTap: () {
             selectedMarkerId.value = cluster.groupId;
-            updateMarkers(); // Refresh to change colors
+            updateMarkers();
             _showContactBottomSheet(cluster.groupId);
           },
         ),
       );
     }
     markers.assignAll(newMarkers);
+    markers.refresh();
   }
 
   Future<BitmapDescriptor> _createCustomMarkerIcon(String label, Color color) async {
@@ -180,7 +200,6 @@ class DiscoveryController extends GetxController {
     const size = Size(110, 160);
 
     final Paint paint = Paint()..color = color;
-
     final Path path = Path();
     path.moveTo(size.width / 2, size.height);
     path.quadraticBezierTo(0, size.height * 0.4, 0, size.width / 2);
@@ -217,9 +236,7 @@ class DiscoveryController extends GetxController {
 
   @override
   void onClose() {
-    //searchTextController.dispose();
+    searchTextController.dispose();
     super.onClose();
   }
 }
-
-

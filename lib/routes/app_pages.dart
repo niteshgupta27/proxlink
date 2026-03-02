@@ -6,6 +6,8 @@ import 'package:proxlink/features/event/bindings/AddeventBindings.dart';
 import 'package:proxlink/features/event/view/AddeventView.dart';
 import 'package:proxlink/features/event/view/eventListView.dart';
 import 'package:proxlink/features/job/bindings/JobBindings.dart';
+import 'package:proxlink/features/job/search/bindings/search_job_bindings.dart';
+import 'package:proxlink/features/job/search/view/search_job_view.dart';
 import 'package:proxlink/features/job/view/jobView.dart';
 import 'package:proxlink/features/network/bindings/networkBindings.dart';
 import 'package:proxlink/features/network/view/QRScannerView.dart';
@@ -15,6 +17,8 @@ import '../Utill/app_required.dart';
 
 import '../features/auth/Login/view/login_view.dart';
 import '../features/bottomNavigation/views/bottom_navigation_view.dart';
+import '../features/job/post/bindings/post_job_bindings.dart';
+import '../features/job/post/view/post_job_view.dart';
 import '../features/membersList/bindings/memberListBindings.dart';
 import '../features/membersList/view/memberList.dart';
 import '../features/network/view/ShareQRView.dart';
@@ -85,6 +89,16 @@ class AppPages {
       name: _Paths.shearqr,
       page: () => ShareQRView(),
       binding: NetworkBindings(),
+    ),
+    GetPage(
+      name: _Paths.post_job,
+      page: () => PostJobView(),
+      binding: PostJobBindings(),
+    ),
+    GetPage(
+      name: _Paths.job_filtter,
+      page: () => SearchJobView(),
+      binding: SearchJobBindings(),
     ),
   ];
 

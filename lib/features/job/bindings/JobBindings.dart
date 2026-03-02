@@ -1,16 +1,14 @@
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_instance/src/bindings_interface.dart';
-
-import '../../../Utill/app_required.dart';
 import '../controller/jobController.dart';
+import '../services/jobService.dart';
 
 
 class JobBindings extends Bindings {
 
   @override
   void dependencies() {
-    Get.lazyPut<JobController>(() => JobController());
+    Get.lazyPut<JobController>(() => JobController(), fenix: true);
+    Get.lazyPut<JobService>(() => JobService());
   }
 
 }

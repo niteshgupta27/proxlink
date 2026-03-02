@@ -42,36 +42,15 @@ class AppConstants {
   static var social_login='auth/social_login.php';
   static var location_update = 'location/update.php';
   static var users_map = 'discover/users_map.php';
+  static var jobs_map = 'jobs/map.php';
+  static var jobs_post = 'jobs/post.php';
   static var networks_join = 'networks/join.php';
   static var networks_create='networks/create.php';
   static var event_List='networks/list.php';
   static var member_List = 'networks/members.php';
-  static var brandDetail='product/brand_details';
-  static var product_details = 'product/product_details';
-  static var category_detail='product/category_inside';
-  static var category_assets='product/category_inside/assets';
-  static var subcategory_detail='product/subcategory_inside';
-  static var subcategory_assets='product/subcategory_inside/assets';
-  static var Instantdelivery='product/selection/deliver/timeline';
 
-  static var address_list = 'user/address/list';
-  static var address_store='user/address/store';
-  static var adress_update='user/address/update';
-  static var address_delete='user/address/delete';
-  static var get_profile='user/profile';
-  static var profile_detail='user/profile';
-  static var term_conditions='information/term-conditions';
-  static var privacy_policy='information/privacy-policy';
-  static var about_us='information/about-us';
-  static var product_addfavorite='user/product/favorite';
-  static var product_listfavorite='user/product/favorite/list';
-  static var Service_listfavorite ='user/service/favorite/list';
-  static var Service_addfavorite='user/service/favorite';
 
-  static var referral='user/referral/info';
-  static var search_detail='product/search';
-  static var transaction='user/transaction';
-  static var addtransaction='user/add/wallet/balance';
+
 
   static var selectedProductInfo="user/product/selected/info";
   static var paymentinfo= "order/product/checkout";

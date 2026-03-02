@@ -42,11 +42,11 @@ class DiscoveryView extends GetView<DiscoveryController> {
               ),
               zoom: 18
             ),
-            markers: controller.markers,
+            markers: controller.markers.toSet(),
             myLocationButtonEnabled: false,
             zoomControlsEnabled: false,
             onMapCreated: (GoogleMapController mapController) {
-              // You can store mapController if needed
+              controller.mapController = mapController;
             },
           )),
 

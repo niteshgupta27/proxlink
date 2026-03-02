@@ -6,6 +6,7 @@ import 'package:proxlink/features/Chat/view/chatView.dart';
 import 'package:proxlink/features/discovery/view/discoveryView.dart';
 import 'package:proxlink/features/job/view/jobView.dart';
 import 'package:proxlink/features/network/view/networkView.dart';
+import 'package:proxlink/features/zone/view/zone_view.dart';
 
 import '../../../Utill/AppConstants.dart';
 import '../../../Utill/Apputills.dart';
@@ -22,7 +23,8 @@ class BottomNavigationController extends GetxController {
   final List<GetView> pages = [
      DiscoveryView(),
      NetworkView(),
-    ChatView(),
+    JobView(),
+    ZoneView(),
      ChatView()
   ];
   var appStorage = Get.find<AppStorage>();

@@ -69,9 +69,15 @@ class BottomNavigationView extends GetView<BottomNavigationController> {
                       ),
                       _buildNavItem(
                         context,
+                        iconPath: Images.Zone,
+                        label: 'Zone',
+                        index: 3,
+                      ),
+                      _buildNavItem(
+                        context,
                         iconPath: Images.chat,
                         label: 'Chat',
-                        index: 3,
+                        index: 4,
                       ),
                     ],
                     selectedLabelStyle: TextStyle(
