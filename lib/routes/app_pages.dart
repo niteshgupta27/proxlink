@@ -11,6 +11,11 @@ import 'package:proxlink/features/job/search/view/search_job_view.dart';
 import 'package:proxlink/features/job/view/jobView.dart';
 import 'package:proxlink/features/network/bindings/networkBindings.dart';
 import 'package:proxlink/features/network/view/QRScannerView.dart';
+import 'package:proxlink/features/zone/bindings/my_zones_bindings.dart';
+import 'package:proxlink/features/zone/bindings/zone_bindings.dart';
+import 'package:proxlink/features/zone/view/create_zone_view.dart';
+import 'package:proxlink/features/zone/view/my_zones_view.dart';
+import 'package:proxlink/features/zone/view/zone_details_view.dart';
 
 import '../Utill/ErrorView.dart';
 import '../Utill/app_required.dart';
@@ -96,9 +101,24 @@ class AppPages {
       binding: PostJobBindings(),
     ),
     GetPage(
-      name: _Paths.job_filtter,
+      name: _Paths.job_fitter,
       page: () => SearchJobView(),
       binding: SearchJobBindings(),
+    ),
+    GetPage(
+      name: _Paths.CreateZone,
+      page: () => const CreateZoneView(),
+      binding: ZoneBindings(),
+    ),
+    GetPage(
+      name: _Paths.ZoneDetails,
+      page: () => const ZoneDetailsView(),
+      binding: ZoneBindings(),
+    ),
+    GetPage(
+      name: _Paths.MyZones,
+      page: () => const MyZonesView(),
+      binding: MyZonesBindings(),
     ),
   ];
 

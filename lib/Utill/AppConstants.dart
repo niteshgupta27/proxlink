@@ -48,6 +48,13 @@ class AppConstants {
   static var networks_create='networks/create.php';
   static var event_List='networks/list.php';
   static var member_List = 'networks/members.php';
+  static var zone_map_realtime = 'zones/map.php';
+  static var zone_create = 'zones/create.php';
+  static var zone_details = 'zones/details.php';
+  static var zone_join = 'zones/join.php';
+  static var zone_leave = 'zones/leave.php';
+  static var zone_membership = 'zones/my_memberships.php';
+  static var zone_ownership = 'zones/my_owned.php';
 
 
 
@@ -88,6 +95,7 @@ static var serviceSearch='service/search';
   static var userNotification = 'user/notification';
   static var splash_baner = 'banner/splash/user';
   static var bulk_enquiry = 'user/bulk/enquiry';
+  static var some_api_key = 'API_KEY';
   static var banerlogin="banner/auth/user/login";
 
 

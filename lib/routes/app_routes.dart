@@ -22,7 +22,10 @@ static const EventList=_Paths.EventList;
 static const QRScanner = _Paths.QRScanner;
   static const shearqr = _Paths.shearqr;
   static const post_job = _Paths.post_job;
-  static const job_filtter = _Paths.job_filtter;
+  static const job_fitter = _Paths.job_fitter;
+  static const CreateZone = _Paths.CreateZone;
+  static const ZoneDetails = _Paths.ZoneDetails;
+  static const MyZones = _Paths.MyZones;
 
 }
 
@@ -44,11 +47,8 @@ abstract class _Paths {
   static const QRScanner = "/qr_scanner";
  static const shearqr = '/shearqr';
  static const post_job = '/post_job';
- static const job_filtter = '/job_filtter';
-// static const CategoryProducts = '/categoryProducts';
-// static const SubCategoryProducts = '/subcategoryProducts';
-// static const Checkout = '/Checkout';
-// static const Profile = '/profile';
-// static const Address = '/address';
-// static const Wallet = '/wallet';
+ static const job_fitter = '/job_fitter';
+ static const CreateZone = '/create_zone';
+ static const ZoneDetails = '/zone_details';
+ static const MyZones = '/my_zones';
 }

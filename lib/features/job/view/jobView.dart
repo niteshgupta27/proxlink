@@ -141,7 +141,7 @@ class JobView extends GetView<JobController> {
                 GestureDetector(
                   onTap: () async {
                     // Navigate to Filter / Search Job View and wait for result
-                    final result = await Get.toNamed(Routes.job_filtter);
+                    final result = await Get.toNamed(Routes.job_fitter);
                     if (result != null && result is Map<String, dynamic>) {
                       controller.fetchJobs(
                         jobType: result['job_type'] ?? "",
