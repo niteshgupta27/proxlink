@@ -3,7 +3,6 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' hide Cluster;
 import 'package:proxlink/Utill/app_colors.dart';
 import 'package:proxlink/Utill/app_storage.dart';
@@ -11,11 +10,16 @@ import 'package:proxlink/features/discovery/model/discovery_Model.dart';
 import 'package:proxlink/features/discovery/services/discoveryService.dart';
 import 'package:proxlink/Utill/Apputills.dart';
 
+import '../../../routes/app_pages.dart';
+import '../../Chat/model/chat_list_model.dart';
+import '../../Chat/services/chat_service.dart';
 import '../view/discoveryView.dart';
+import '../../Chat/controller/chatController.dart';
 
 class DiscoveryController extends GetxController {
   final appStorage = Get.find<AppStorage>();
   final discoveryservice = Get.find<Discoveryservice>();
+  final chatController = Get.find<ChatController>();
 
   GoogleMapController? mapController;
 
@@ -31,7 +35,7 @@ class DiscoveryController extends GetxController {
   var groupedUsers = <String, List<GroupedUser>>{}.obs;
 
   // Search logic
-  var searchProfession = "".obs;
+  var searchQuery = "".obs;
   final TextEditingController searchTextController = TextEditingController();
 
   @override
@@ -46,6 +50,9 @@ class DiscoveryController extends GetxController {
     }
     
     _handleLocationAndService();
+    searchTextController.addListener(() {
+      searchQuery.value = searchTextController.text;
+    });
     _setupSearchDebounce();
     
     // Listen to location changes and update map position & data
@@ -71,7 +78,11 @@ class DiscoveryController extends GetxController {
     LocationPermission permission;
 
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) return;
+    if (!serviceEnabled) {
+      // If service is disabled, we still want to try to load data with what we have
+      if (isLocationReady.value) _initData();
+      return;
+    }
 
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
@@ -83,7 +94,7 @@ class DiscoveryController extends GetxController {
 
     try {
       Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
+        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
       );
       
       // If we didn't have location yet, set it as initial
@@ -107,15 +118,17 @@ class DiscoveryController extends GetxController {
     fetchDiscoveryUsers(
       lat: appStorage.current_lat.value,
       lng: appStorage.current_lng.value,
-      profession: searchProfession.value,
+      profession: searchTextController.text,
     );
   }
 
   /// Manages the debounced search logic
   void _setupSearchDebounce() {
-    debounce(searchProfession, (String value) {
-      _initData();
-    }, time: const Duration(milliseconds: 800));
+    debounce(searchQuery, (String value) {
+      if (isLocationReady.value) {
+        _initData();
+      }
+    }, time: const Duration(milliseconds: 600));
   }
 
   /// Main function to fetch discovery data and handle state
@@ -153,7 +166,7 @@ class DiscoveryController extends GetxController {
 
   /// Handles the response dataset and updates state
   Future<void> _handleDiscoveryResponse(DiscoveryModelResponse response) async {
-   markers.value= <Marker>{};
+   markers.clear();
     if (response.status == "success") {
       clusterList.value = response.clusters;
       groupedUsers.value = response.groupedUsers;
@@ -197,7 +210,7 @@ markers.assignAll(newMarkers);
   Future<BitmapDescriptor> _createCustomMarkerIcon(String label, Color color) async {
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
-    const size = Size(110, 160);
+    const size = Size(50, 70);
 
     final Paint paint = Paint()..color = color;
     final Path path = Path();
@@ -212,7 +225,7 @@ markers.assignAll(newMarkers);
     TextPainter textPainter = TextPainter(
       text: TextSpan(
         text: label,
-        style: TextStyle(color: color, fontSize: 40, fontWeight: FontWeight.bold),
+        style: TextStyle(color: color, fontSize: 16, fontWeight: FontWeight.bold),
       ),
       textDirection: TextDirection.ltr,
     )..layout();
@@ -221,7 +234,7 @@ markers.assignAll(newMarkers);
 
     final img = await pictureRecorder.endRecording().toImage(size.width.toInt(), size.height.toInt());
     final data = await img.toByteData(format: ui.ImageByteFormat.png);
-    return BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
+    return BitmapDescriptor.bytes(data!.buffer.asUint8List());
   }
 
   void _showContactBottomSheet(String groupId) {

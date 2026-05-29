@@ -1,3 +1,5 @@
+import 'package:http_parser/http_parser.dart';
+import 'package:path/path.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -40,6 +42,50 @@ class BaseClient extends GetConnect {
       ).timeout(const Duration(seconds: timeOutDuration));
       
       return _processResponse(response);
+    } catch (exception) {
+      rethrow;
+    }
+  }
+
+  Future<dynamic> postMultipartRequest({
+    required String endPoint,
+    required Map<String, dynamic> body,
+    required File file,
+    required String fileKey,
+  }) async {
+    final uri = Uri.parse(AppConstants.baseUrl + endPoint);
+    try {
+      var request = http.MultipartRequest('POST', uri);
+      
+      // Add headers
+      request.headers.addAll(requestHeaders());
+      
+      // Add fields
+      body.forEach((key, value) {
+        if (value is Map) {
+          request.fields[key] = json.encode(value);
+        } else {
+          request.fields[key] = value.toString();
+        }
+      });
+      
+      // Add file
+      var stream = http.ByteStream(file.openRead());
+      var length = await file.length();
+      var multipartFile = http.MultipartFile(
+        fileKey,
+        stream,
+        length,
+        filename: basename(file.path),
+        contentType: MediaType('image', 'jpeg'), // Adjust based on file type if needed
+      );
+      request.files.add(multipartFile);
+      
+      var response = await request.send();
+      var responseData = await response.stream.toBytes();
+      var responseString = String.fromCharCodes(responseData);
+      
+      return _processResponse(http.Response(responseString, response.statusCode, request: request));
     } catch (exception) {
       rethrow;
     }

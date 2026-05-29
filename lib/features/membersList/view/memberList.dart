@@ -6,6 +6,7 @@ import '../../../Utill/AppConstants.dart';
 import '../../../Utill/Images.dart';
 import '../../../Utill/app_colors.dart';
 import '../../discovery/model/discovery_Model.dart';
+import '../../Chat/controller/chatController.dart';
 import '../controller/memberListController.dart';
 import '../model/NetworkModel.dart';
 
@@ -40,7 +41,7 @@ class MemberListview extends GetView<MemberListController> {
           ),
         ),
         title: Text(
-          "Members",
+          "${controller.networkname} - Members",
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,
@@ -51,18 +52,18 @@ class MemberListview extends GetView<MemberListController> {
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 25),
-            child: Text(
-              "Select a network to view members",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-                fontFamily: AppConstants.fontFamily_Acre,
-                color: Colors.black,
-              ),
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(vertical: 25),
+          //   child: Text(
+          //     "Select a network to view members",
+          //     style: TextStyle(
+          //       fontSize: 20,
+          //       fontWeight: FontWeight.w800,
+          //       fontFamily: AppConstants.fontFamily_Acre,
+          //       color: Colors.black,
+          //     ),
+          //   ),
+          // ),
           Expanded(
             child: Obx(() => ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -95,15 +96,21 @@ class MemberListview extends GetView<MemberListController> {
               ],
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
+          InkWell(
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
                 color: AppColors.primaryColor.withOpacity(0.3),
                 shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.circular(5.0)
+                borderRadius: BorderRadius.circular(5.0),
+              ),
+              child: SvgPicture.asset(Images.chatsheet),
             ),
-            child: SvgPicture.asset(Images.chatsheet,),
-          )
+            onTap: () => Get.find<ChatController>().navigateToChat(
+              otherUserId: user.userId,
+              otherUserName: user.name,
+            ),
+          ),
         ],
       ),
     );

@@ -7,7 +7,10 @@ import '../eventservice.dart';
 
 class AddeventController extends GetxController {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  
+
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+
   var eventName = ''.obs;
   var description = ''.obs;
   final AppStorage _appStorage = Get.find<AppStorage>();
@@ -20,6 +23,19 @@ class AddeventController extends GetxController {
   void onInit() {
     super.onInit();
     fetchNetworks();
+    nameController.addListener(() {
+      eventName.value = nameController.text;
+    });
+    descriptionController.addListener(() {
+      description.value = descriptionController.text;
+    });
+  }
+
+  @override
+  void onClose() {
+    nameController.dispose();
+    descriptionController.dispose();
+    super.onClose();
   }
 
   Future<void> createEvent() async {

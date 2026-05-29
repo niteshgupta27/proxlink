@@ -5,9 +5,10 @@ class AppConstants {
   static const String fontFamily_Acre = 'Acre';
 
   static const String fontFamily_Inter = 'Inter';
+  // new url PipeCycleCRM.com |  old url customersquare.com
 
-  static const String baseUrl = 'https://customersquare.com/lalaat/api/';
-  static const String ImaepathHost='https://dashboard.proxlink.com/';
+  static const String baseUrl = 'https://pipecyclecrm.com/lalaat/api/';
+  static const String ImaepathHost='https://pipecyclecrm.com';
   // static const String baseUrl = 'https://proxlink.encodeit.in/api/';
   // static const String ImaepathHost='https://proxlink.encodeit.in/';
   static const String configUri = '/api/v1/config';
@@ -55,6 +56,15 @@ class AppConstants {
   static var zone_leave = 'zones/leave.php';
   static var zone_membership = 'zones/my_memberships.php';
   static var zone_ownership = 'zones/my_owned.php';
+  static var get_or_create_chat = 'chat/get_or_create.php';
+  static var chat_send = 'chat/send.php';
+  static var chat_get_messages = 'chat/get_messages.php';
+  static var chat_list = 'chat/chat_list.php';
+  static var chat_mark_delivered = 'chat/mark_delivered.php';
+  static var chat_mark_read = 'chat/mark_read.php';
+  static var chat_typing = 'chat/typing.php';
+  static var chat_upload = 'chat/upload.php';
+  static var user_online_status = 'user/online_status.php';
 
 
 
@@ -80,7 +90,7 @@ class AppConstants {
   static var Amc_ServiceBook= "order/amc/book";
   static var Amc_search="amc/search";
   static var delete_account='user/user-delete-account';
-  static var updateToken= "user/update-fcm";
+  static var updateToken= "user/save_device.php";
 
 
 

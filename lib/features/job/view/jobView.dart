@@ -3,10 +3,12 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:proxlink/Utill/app_colors.dart';
+import 'package:proxlink/common/widget/custom_popup_menu_item.dart';
 import '../../../Utill/AppConstants.dart';
 import '../../../Utill/Dimensions.dart';
 import '../../../Utill/Images.dart';
 import '../../../routes/app_pages.dart';
+import '../../Chat/controller/chatController.dart';
 import '../controller/jobController.dart';
 import '../model/JobResponse.dart';
 
@@ -114,8 +116,9 @@ class JobView extends GetView<JobController> {
                         ),
                       ],
                     ),
-                    child: const TextField(
-                      decoration: InputDecoration(
+                    child: TextField(
+                      controller: controller.searchTextController,
+                      decoration: const InputDecoration(
                         prefixIcon: Icon(Icons.search, color: Colors.black, size: 24),
                         hintText: "Search Jobs",
                         border: InputBorder.none,
@@ -127,7 +130,7 @@ class JobView extends GetView<JobController> {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.black,
                         fontFamily: AppConstants.fontFamily_Acre,
                         fontSize: Dimensions.fontSizeLarge,
@@ -174,6 +177,7 @@ class JobView extends GetView<JobController> {
               ],
             ),
           ),
+          const CustomPopupMenu(),
         ],
       ),
     );
@@ -277,7 +281,10 @@ class JobDetailsBottomSheet extends StatelessWidget {
           Positioned(
             bottom: 0,
             right: 0,
-            child: Container(
+            child:InkWell(  onTap: () => Get.find<ChatController>().navigateToChat(
+    otherUserId: job.posted_by_user_id,
+    otherUserName: job.companyName,
+    ),child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: const BoxDecoration(
                 color: Color(0xFF1A73E8), // Match the blue from UI
@@ -294,7 +301,7 @@ class JobDetailsBottomSheet extends StatelessWidget {
                       style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                 ],
               ),
-            ),
+            ),)
           ),
         ],
       ),

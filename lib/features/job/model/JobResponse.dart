@@ -62,7 +62,7 @@ class JobDetail {
   final double lat;
   final double lng;
   final DateTime? createdAt;
-
+final int posted_by_user_id;
   JobDetail({
     required this.jobId,
     required this.title,
@@ -73,7 +73,7 @@ class JobDetail {
     required this.salaryCurrency,
     required this.lat,
     required this.lng,
-    required this.createdAt,
+    required this.createdAt,required this.posted_by_user_id
   });
 
   factory JobDetail.fromJson(Map<String, dynamic> json) {
@@ -88,6 +88,7 @@ class JobDetail {
       lat: double.tryParse(json['lat']?.toString() ?? '') ?? 0.0,
       lng: double.tryParse(json['lng']?.toString() ?? '') ?? 0.0,
       createdAt: json['created_at'] != null ? DateTime.tryParse(json['created_at'].toString()) : null,
+      posted_by_user_id: json['posted_by_user_id']
     );
   }
 }

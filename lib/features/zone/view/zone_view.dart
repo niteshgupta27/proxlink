@@ -4,6 +4,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart' hide Cluster;
 import 'package:proxlink/Utill/AppConstants.dart';
 import 'package:proxlink/Utill/Dimensions.dart';
 import 'package:proxlink/Utill/app_colors.dart';
+import 'package:proxlink/common/widget/custom_popup_menu_item.dart';
 import 'package:proxlink/features/zone/model/zone_model.dart';
 import '../../../routes/app_pages.dart';
 import '../controller/zone_controller.dart';
@@ -58,6 +59,7 @@ class ZoneView extends GetView<ZoneController> {
               ),
             ),
           ),
+          const CustomPopupMenu(),
         ],
       ),
       body: Stack(

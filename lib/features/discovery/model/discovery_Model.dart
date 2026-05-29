@@ -18,15 +18,16 @@ class DiscoveryModelResponse {
       clusters: (json['clusters'] as List<dynamic>? ?? [])
           .map((e) => Cluster.fromJson(e))
           .toList(),
-      groupedUsers: (json['grouped_users'] as Map<String, dynamic>? ?? {})
-          .map(
-            (key, value) => MapEntry(
-          key,
-          (value as List<dynamic>)
-              .map((e) => GroupedUser.fromJson(e))
-              .toList(),
-        ),
-      ),
+      groupedUsers: json['grouped_users'] is Map<String, dynamic>
+          ? (json['grouped_users'] as Map<String, dynamic>).map(
+              (key, value) => MapEntry(
+                key,
+                (value as List<dynamic>)
+                    .map((e) => GroupedUser.fromJson(e))
+                    .toList(),
+              ),
+            )
+          : {},
     );
   }
 }

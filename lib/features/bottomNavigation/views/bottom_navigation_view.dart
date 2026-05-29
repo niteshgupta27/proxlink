@@ -58,7 +58,7 @@ class BottomNavigationView extends GetView<BottomNavigationController> {
                       _buildNavItem(
                         context,
                         iconPath: Images.Network,
-                        label: 'Network',
+                        label: 'Events',
                         index: 1,
                       ),
                       _buildNavItem(

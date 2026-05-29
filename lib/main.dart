@@ -20,6 +20,7 @@ import 'package:proxlink/proxlink.dart';
 import 'package:proxlink/Utill/AppConstants.dart';
 import 'package:proxlink/features/network/controller/NetworkController.dart';
 
+import 'Utill/Apputills.dart';
 import 'firebase_options.dart';
 
 @pragma('vm:entry-point')
@@ -30,31 +31,39 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  
-  // Explicitly set both Status Bar and Navigation Bar styles
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
-    statusBarColor: AppColors.primaryColor,
-    statusBarIconBrightness: Brightness.light, // White icons for Android status bar
-    statusBarBrightness: Brightness.dark,      // White icons for iOS status bar
-    systemNavigationBarColor: AppColors.primaryColor, // Matching color for navigation bar
-    systemNavigationBarIconBrightness: Brightness.light, // White icons for navigation bar
-  ));
-
-  await GetStorage.init();
-  
-  final storage = Get.put(AppStorage());
-  await storage.init();
-
-  try {
-    if (Firebase.apps.isEmpty) {
-      await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-    }
-  } catch (e) {}
-
-  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-
   await runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+
+    // Explicitly set both Status Bar and Navigation Bar styles
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
+      statusBarColor: AppColors.primaryColor,
+      statusBarIconBrightness: Brightness.light, // White icons for Android status bar
+      statusBarBrightness: Brightness.dark,      // White icons for iOS status bar
+      systemNavigationBarColor: AppColors.primaryColor, // Matching color for navigation bar
+      systemNavigationBarIconBrightness: Brightness.light, // White icons for navigation bar
+    ));
+
+    await GetStorage.init();
+
+    final storage = Get.put(AppStorage());
+    await storage.init();
+
+    // Load storage into memory
+    storage.loggedInUserToken = GetStorage().read(AppConstants.loginUserInformationToken) ?? "";
+    storage.loggedInUserId = GetStorage().read(AppConstants.loginUserId);
+
+    if (storage.loggedInUserToken.isNotEmpty) {
+      initializeService();
+    }
+
+    try {
+      if (Firebase.apps.isEmpty) {
+        await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+      }
+    } catch (e) {}
+
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
     runApp(const ProxlinkApp());
   }, (error, stack) {
     if (!kIsWeb) FirebaseCrashlytics.instance.recordError(error, stack);
@@ -63,7 +72,8 @@ Future<void> main() async {
 
 Future<void> initializeService() async {
   final service = FlutterBackgroundService();
-  
+  AppUtils.initFCM(true);
+
   const AndroidNotificationChannel channel = AndroidNotificationChannel(
     'my_foreground', 'PROXLINK SERVICE', 
     importance: Importance.low
@@ -93,6 +103,15 @@ Future<bool> onIosBackground(ServiceInstance service) async => true;
 void onStart(ServiceInstance service) async {
   DartPluginRegistrant.ensureInitialized();
   
+  // 🚀 INITIALIZE FIREBASE FOR THE BACKGROUND ISOLATE
+  try {
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    }
+  } catch (e) {
+    print("Firebase Background Error: $e");
+  }
+
   // 🚀 RE-INITIALIZE EVERYTHING FOR THE BACKGROUND ISOLATE
   await GetStorage.init();
   final storage = Get.put(AppStorage());
@@ -109,21 +128,25 @@ void onStart(ServiceInstance service) async {
 
   Timer.periodic(const Duration(seconds: 20), (timer) async {
     try {
+      print("--- BACKGROUND FETCHING LOCATION ---");
       Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-        timeLimit: const Duration(seconds: 10),
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+          timeLimit: Duration(seconds: 15),
+        ),
       );
       
+      print("--- BACKGROUND LOCATION FETCHED: ${position.latitude}, ${position.longitude} ---");
       await locationService.updateLocation(position);
 
-      if (service is AndroidServiceInstance) {
-        service.setForegroundNotificationInfo(
-          title: "Tracking Active",
-          content: "Last Update: ${position.latitude.toStringAsFixed(4)}, ${position.longitude.toStringAsFixed(4)}",
-        );
-      }
+      // if (service is AndroidServiceInstance) {
+      //   service.setForegroundNotificationInfo(
+      //     title: "Tracking Active",
+      //     content: "Last Update: ${position.latitude.toStringAsFixed(4)}, ${position.longitude.toStringAsFixed(4)}",
+      //   );
+      // }
     } catch (e) {
-      print("Location Error: $e");
+      print("Background Location Error: $e");
     }
   });
 }

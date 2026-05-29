@@ -1,3 +1,6 @@
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/bindings_interface.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:proxlink/features/auth/Otp/view/Otpview.dart';
 import 'package:proxlink/features/auth/signup/view/SignUpView.dart';
@@ -27,6 +30,8 @@ import '../features/job/post/view/post_job_view.dart';
 import '../features/membersList/bindings/memberListBindings.dart';
 import '../features/membersList/view/memberList.dart';
 import '../features/network/view/ShareQRView.dart';
+import '../features/Chat/view/chat_detail_view.dart';
+import '../features/Chat/controller/chat_detail_controller.dart';
 import '../features/splash/view/SplashView.dart';
 
 
@@ -119,6 +124,13 @@ class AppPages {
       name: _Paths.MyZones,
       page: () => const MyZonesView(),
       binding: MyZonesBindings(),
+    ),
+    GetPage(
+      name: _Paths.CHAT_DETAILS,
+      page: () => const ChatDetailView(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut<ChatDetailController>(() => ChatDetailController());
+      }),
     ),
   ];
 

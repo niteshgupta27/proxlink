@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -165,6 +166,21 @@ if(login) {
     return regExp.hasMatch(number);
   }
 
+  static void showLoading() {
+    Get.dialog(
+      const Center(
+        child: CircularProgressIndicator(),
+      ),
+      barrierDismissible: false,
+    );
+  }
+
+  static void hideLoading() {
+    if (Get.isDialogOpen ?? false) {
+      Get.back();
+    }
+  }
+
   static Future<String> getFilePathFromAssets(String assetPath, String filename) async {
     // Load asset as byte data
     final byteData = await rootBundle.load(assetPath);
@@ -181,5 +197,20 @@ if(login) {
     return file.path;
   }
 
-
+  static Future<String> getDeviceId() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    if (kIsWeb) {
+      WebBrowserInfo webBrowserInfo = await deviceInfo.webBrowserInfo;
+      return webBrowserInfo.userAgent ?? "web";
+    } else {
+      if (Platform.isAndroid) {
+        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+        return androidInfo.id;
+      } else if (Platform.isIOS) {
+        IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+        return iosInfo.identifierForVendor ?? "ios";
+      }
+    }
+    return "unknown";
+  }
 }

@@ -18,7 +18,7 @@ class MemberListController extends GetxController {
   final Memberserviceservice _eventService = Memberserviceservice();
   final appStorage = Get.find<AppStorage>();
   var view_as = ''.obs;
-
+  RxString networkname= ''.obs;
   @override
   void onInit() {
     super.onInit();
@@ -26,6 +26,7 @@ class MemberListController extends GetxController {
     if(argument != null){
       networkId.value=argument['network_id'].toString();
       view_as.value=argument['view_as'];
+      networkname.value=argument['network_name'];
       List_event();
     }
 

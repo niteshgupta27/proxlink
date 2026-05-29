@@ -10,6 +10,7 @@ import '../../../../Utill/AppConstants.dart';
 import '../../../../Utill/Apputills.dart';
 
 import '../../../../Utill/app_storage.dart';
+import '../../../../main.dart';
 import '../../../../routes/app_pages.dart';
 import '../../services/auth_services.dart';
 
@@ -17,11 +18,11 @@ class SignUpController extends GetxController {
   final professionCtrl = TextEditingController();
   final nameCtrl = TextEditingController();
   final ageCtrl = TextEditingController();
+  final organizationCtrl = TextEditingController();
   RxBool isLoading = false.obs;
 
   RxString gender = "Male".obs;
   RxString profession = "Working Professional".obs;
-  RxString organization = "Company Name / College Name".obs;
   var appStorage = Get.find<AppStorage>();
 
   RxBool agree = false.obs;
@@ -48,7 +49,7 @@ class SignUpController extends GetxController {
         "age": ageCtrl.text.toString(),
         "full_name": nameCtrl.text.toString(),
         "gender": gender.value,
-        "organization_name": organization.value,
+        "organization_name": organizationCtrl.text.toString(),
         "profession": professionCtrl.text.toString(),
         "terms_accepted": agree.value,
         "user_category":profession.value
@@ -63,6 +64,7 @@ class SignUpController extends GetxController {
         await appStorage.write(AppConstants.loginUserInformationToken, appStorage.loggedInUserToken);
        // appStorage.loggedInUserId = value.userId;
         await appStorage.write(AppConstants.loginUserId, appStorage.loggedInUserId);
+        initializeService();
         Get.offAllNamed(Routes.BOTTOM_NAVIGATION);
       } else {
         AppUtils.showSnackbar(value.message ?? "Authentication failed", "Info");
@@ -75,7 +77,10 @@ class SignUpController extends GetxController {
 
   @override
   void onClose() {
+    professionCtrl.dispose();
     nameCtrl.dispose();
     ageCtrl.dispose();
+    organizationCtrl.dispose();
     super.onClose();
-  }}
+  }
+}

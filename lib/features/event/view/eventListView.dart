@@ -40,7 +40,7 @@ class EventListview extends GetView<EventListController> {
           ),
         ),
         title: const Text(
-          "Members",
+          "Events",
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,
@@ -51,18 +51,18 @@ class EventListview extends GetView<EventListController> {
       ),
       body: Column(
         children: [
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 25),
-            child: Text(
-              "Select a network to view members",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
-                fontFamily: AppConstants.fontFamily_Acre,
-                color: Colors.black,
-              ),
-            ),
-          ),
+          // const Padding(
+          //   padding: EdgeInsets.symmetric(vertical: 25),
+          //   child: Text(
+          //     "Select a network to view members",
+          //     style: TextStyle(
+          //       fontSize: 20,
+          //       fontWeight: FontWeight.w500,
+          //       fontFamily: AppConstants.fontFamily_Acre,
+          //       color: Colors.black,
+          //     ),
+          //   ),
+          // ),
           Expanded(
             child: Obx(() => controller.isLoading ==true? Center(child: CustomLoaderWidget(color:AppColors.primaryColor ,)):ListView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -149,8 +149,8 @@ class EventListview extends GetView<EventListController> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Members",
+                     Text(
+                     "Events",
                       style: TextStyle(
                         fontSize: 11,fontFamily: AppConstants.fontFamily_Acre,
                         color: Colors.white70,
@@ -167,64 +167,64 @@ class EventListview extends GetView<EventListController> {
                   ],
                 ),
                 // Overlapping avatars
-                SizedBox(
-                  width: 80,
-                  height: 30,
-                  child: Stack(
-                    children: [
-                      const Positioned(
-                        right: 40,
-                        child: CircleAvatar(
-                          radius: 14,
-                          backgroundColor: Colors.white,
-                          child: CircleAvatar(
-                            radius: 13,
-                            backgroundImage: NetworkImage("https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjUM6RjCVFkhLB_YuYGcuV2lw8Zukn6VASqzKRwM4klEhdfbGfJomXQ3oRDHurkHuHf9IaEhRkx2iYblYIlMTJgPiSfPkxndw6yuwKN8EZGDzzqHcoBoTj2Hf-iDEiZLDM8mEwjvp0Br7Ar/s1600/digital+painting+of+avtar.jpg"),
-                          ),
-                        ),
-                      ),
-                      const Positioned(
-                        right: 25,
-                        child: CircleAvatar(
-                          radius: 14,
-                          backgroundColor: Colors.white,
-                          child: CircleAvatar(
-                            radius: 13,
-                            backgroundImage: NetworkImage("https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjUM6RjCVFkhLB_YuYGcuV2lw8Zukn6VASqzKRwM4klEhdfbGfJomXQ3oRDHurkHuHf9IaEhRkx2iYblYIlMTJgPiSfPkxndw6yuwKN8EZGDzzqHcoBoTj2Hf-iDEiZLDM8mEwjvp0Br7Ar/s1600/digital+painting+of+avtar.jpg"),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        right: 0,
-                        child: Container(
-                          width: 28,
-                          height: 28,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFC0DAFF),
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 1),
-                          ),
-                          alignment: Alignment.center,
-                          child: const Text(
-                            "+42",
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF1877F2),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                // SizedBox(
+                //   width: 80,
+                //   height: 30,
+                //   child: Stack(
+                //     children: [
+                //       const Positioned(
+                //         right: 40,
+                //         child: CircleAvatar(
+                //           radius: 14,
+                //           backgroundColor: Colors.white,
+                //           child: CircleAvatar(
+                //             radius: 13,
+                //             backgroundImage: NetworkImage("https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjUM6RjCVFkhLB_YuYGcuV2lw8Zukn6VASqzKRwM4klEhdfbGfJomXQ3oRDHurkHuHf9IaEhRkx2iYblYIlMTJgPiSfPkxndw6yuwKN8EZGDzzqHcoBoTj2Hf-iDEiZLDM8mEwjvp0Br7Ar/s1600/digital+painting+of+avtar.jpg"),
+                //           ),
+                //         ),
+                //       ),
+                //       const Positioned(
+                //         right: 25,
+                //         child: CircleAvatar(
+                //           radius: 14,
+                //           backgroundColor: Colors.white,
+                //           child: CircleAvatar(
+                //             radius: 13,
+                //             backgroundImage: NetworkImage("https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjUM6RjCVFkhLB_YuYGcuV2lw8Zukn6VASqzKRwM4klEhdfbGfJomXQ3oRDHurkHuHf9IaEhRkx2iYblYIlMTJgPiSfPkxndw6yuwKN8EZGDzzqHcoBoTj2Hf-iDEiZLDM8mEwjvp0Br7Ar/s1600/digital+painting+of+avtar.jpg"),
+                //           ),
+                //         ),
+                //       ),
+                //       Positioned(
+                //         right: 0,
+                //         child: Container(
+                //           width: 28,
+                //           height: 28,
+                //           decoration: BoxDecoration(
+                //             color: const Color(0xFFC0DAFF),
+                //             shape: BoxShape.circle,
+                //             border: Border.all(color: Colors.white, width: 1),
+                //           ),
+                //           alignment: Alignment.center,
+                //           child: const Text(
+                //             "+42",
+                //             style: TextStyle(
+                //               fontSize: 10,
+                //               fontWeight: FontWeight.bold,
+                //               color: Color(0xFF1877F2),
+                //             ),
+                //           ),
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
               ],
             ),
           ),
         ],
       ),
     ),onTap: (){
-      Get.toNamed(Routes.memebersList,arguments: {"network_id":network.networkId,"view_as":controller.view_as.value});
+      Get.toNamed(Routes.memebersList,arguments: {"network_id":network.networkId,"view_as":controller.view_as.value,"network_name":network.name});
     },);
   }
 }

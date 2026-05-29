@@ -14,6 +14,7 @@ import 'package:proxlink/features/auth/services/auth_services.dart';
 import '../../../../Utill/AppConstants.dart';
 import '../../../../Utill/Apputills.dart';
 import '../../../../Utill/app_storage.dart';
+import '../../../../main.dart';
 import '../../../../routes/app_pages.dart';
 
 class LoginController extends GetxController {
@@ -34,7 +35,7 @@ String providername="";
     //   ever(firebaseUser, handleAuthChanged);
     //   startAnimation();
     // }
-    // AppUtils.initFCM(false);
+     AppUtils.initFCM(false);
    //AppUtils.currentHeaderThemeColor =AppColors.primaryColor ;
   }
   Future startAnimation() async {
@@ -162,7 +163,7 @@ String providername="";
 
   Future<void> signInWithSocial(User user, String provider, {String? token, String? webEmail}) async {
     isLoading.value = true;
-    String deviceId = await getDeviceId();
+    String deviceId = await AppUtils.getDeviceId();
     
     var requestBody = {
       "device_id": deviceId,
@@ -206,6 +207,7 @@ String providername="";
              await appStorage.write(AppConstants.loginUserId, value.userId);
           await appStorage.write('current_lat', 0.0);
           await appStorage.write('current_lng', 0.0);
+          initializeService();
           // Get.toNamed(Routes.SignUpSCREEN, parameters: {
           //   'provider_id': user.uid,
           //   'email': webEmail ?? user.email ?? "",
@@ -222,22 +224,7 @@ String providername="";
     });
   }
 
-  Future<String> getDeviceId() async {
-    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    if (kIsWeb) {
-      WebBrowserInfo webBrowserInfo = await deviceInfo.webBrowserInfo;
-      return webBrowserInfo.userAgent ?? "web";
-    } else {
-      if (Platform.isAndroid) {
-        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-        return androidInfo.id;
-      } else if (Platform.isIOS) {
-        IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-        return iosInfo.identifierForVendor ?? "ios";
-      }
-    }
-    return "unknown";
-  }
+
 
 
 }

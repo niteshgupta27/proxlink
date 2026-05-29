@@ -109,7 +109,7 @@ class ShareQRView extends GetView<ShearQRController>  {
                 _buildActionButton(Icons.share_outlined, "Share", () => _shareQR()),
                 _buildActionButton(Icons.print_outlined, "Print", () => _printQR()),
                 _buildActionButton(Icons.groups_outlined, "Members", () {
-                  Get.toNamed(Routes.memebersList,arguments: {"network_id":controller.networkId,"view_as":"Host"});
+                  Get.toNamed(Routes.memebersList,arguments: {"network_id":controller.networkId,"view_as":"Host","network_name":controller.networkName.value});
                 }),
               ],
             ),

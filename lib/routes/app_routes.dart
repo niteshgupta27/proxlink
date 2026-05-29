@@ -26,6 +26,7 @@ static const QRScanner = _Paths.QRScanner;
   static const CreateZone = _Paths.CreateZone;
   static const ZoneDetails = _Paths.ZoneDetails;
   static const MyZones = _Paths.MyZones;
+  static const CHAT_DETAILS = _Paths.CHAT_DETAILS;
 
 }
 
@@ -51,4 +52,5 @@ abstract class _Paths {
  static const CreateZone = '/create_zone';
  static const ZoneDetails = '/zone_details';
  static const MyZones = '/my_zones';
+ static const CHAT_DETAILS = '/chat_details';
 }

@@ -26,11 +26,21 @@ class JobController extends GetxController {
   RxList<Cluster> clusterList = <Cluster>[].obs;
   var groupedDetails = <String, List<JobDetail>>{}.obs;
 
+  // Search logic
+  var searchQuery = "".obs;
+  final TextEditingController searchTextController = TextEditingController();
+
   @override
   void onInit() {
     super.onInit();
     _handleLocation();
-    fetchJobs();
+    
+    searchTextController.addListener(() {
+      searchQuery.value = searchTextController.text;
+    });
+    
+    _setupSearchDebounce();
+
     // Listen to location changes and update map camera position & markers
     everAll([appStorage.current_lat, appStorage.current_lng], (_) {
       _moveCameraToCurrentLocation();
@@ -76,7 +86,7 @@ class JobController extends GetxController {
 
     try {
       Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
+        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
       );
       appStorage.current_lng.value = position.longitude;
       appStorage.current_lat.value = position.latitude;
@@ -86,6 +96,13 @@ class JobController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  /// Manages the debounced search logic
+  void _setupSearchDebounce() {
+    debounce(searchQuery, (String value) {
+      fetchJobs(keywords: value);
+    }, time: const Duration(milliseconds: 600));
   }
 
   Future<void> fetchJobs({
@@ -120,7 +137,7 @@ class JobController extends GetxController {
         "salary_max": salaryMax
       }
     };
-
+print(body);
     try {
       final response = await jobService.getJobsMap(body: body);
       await _handleJobResponse(response);
@@ -131,13 +148,11 @@ class JobController extends GetxController {
   }
 
   Future<void> _handleJobResponse(JobResponse response) async {
-    markers.value = <Marker>{};
+    markers.clear();
     if (response.status == "success") {
       clusterList.value = response.clusters;
       groupedDetails.value = response.groupedDetails;
       await updateMarkers();
-    } else {
-      markers.assignAll(<Marker>{});
     }
     isLoading.value = false;
   }
@@ -172,7 +187,7 @@ class JobController extends GetxController {
   Future<BitmapDescriptor> _createCustomMarkerIcon(String label, Color color) async {
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
-    const size = Size(110, 160);
+    const size = Size(50, 70);
 
     final Paint paint = Paint()..color = color;
     final Path path = Path();
@@ -187,7 +202,7 @@ class JobController extends GetxController {
     TextPainter textPainter = TextPainter(
       text: TextSpan(
         text: label,
-        style: TextStyle(color: color, fontSize: 40, fontWeight: FontWeight.bold),
+        style: TextStyle(color: color, fontSize: 16, fontWeight: FontWeight.bold),
       ),
       textDirection: TextDirection.ltr,
     )..layout();
@@ -196,7 +211,7 @@ class JobController extends GetxController {
 
     final img = await pictureRecorder.endRecording().toImage(size.width.toInt(), size.height.toInt());
     final data = await img.toByteData(format: ui.ImageByteFormat.png);
-    return BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
+    return BitmapDescriptor.bytes(data!.buffer.asUint8List());
   }
 
   void _showJobDetailsBottomSheet(String groupId) {
@@ -207,5 +222,11 @@ class JobController extends GetxController {
       enableDrag: true,
       backgroundColor: Colors.transparent,
     );
+  }
+
+  @override
+  void onClose() {
+    searchTextController.dispose();
+    super.onClose();
   }
 }

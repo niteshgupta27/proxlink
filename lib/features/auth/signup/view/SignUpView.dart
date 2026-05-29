@@ -89,7 +89,7 @@ class SignUpView extends GetView<SignUpController> {
                           _infoBox(
                             controller.professionCtrl,
                             "",
-                            maxLength: 20,
+                            maxLength: 40,
                             validator: (v) => (v == null || v.isEmpty) ? "This field is required" : null,
                             inputFormatters: [
                               FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9 ,.\-]')),
@@ -109,6 +109,7 @@ class SignUpView extends GetView<SignUpController> {
                             controller.ageCtrl,
                             "25",
                             keyboard: TextInputType.number,
+                            textCapitalization: TextCapitalization.none,
                             validator: (v) {
                               if (v == null || v.isEmpty) return "Age required";
                               final age = int.tryParse(v);
@@ -125,8 +126,13 @@ class SignUpView extends GetView<SignUpController> {
                           _label("What best describe you? *"),
                           _professionDropdown(),
 
-                          _label("Company Name / College Name"),
-                          _organizationDropdown(),
+                          _label("Company Name / College Name *"),
+                          _textField(
+                            controller.organizationCtrl,
+                            "Google / IIT Delhi",
+                            validator: (v) =>
+                            (v == null || v.isEmpty) ? "Company/College Name required" : null,
+                          ),
 
                           const SizedBox(height: 17),
                           _terms(),
@@ -197,6 +203,7 @@ class SignUpView extends GetView<SignUpController> {
         String? Function(String?)? validator,
         List<TextInputFormatter>? inputFormatters,
         int? maxLength,
+        TextCapitalization textCapitalization = TextCapitalization.sentences,
       }) {
     return Container(
       padding: const EdgeInsets.all(10),
@@ -207,6 +214,8 @@ class SignUpView extends GetView<SignUpController> {
         validator: validator,
         inputFormatters: inputFormatters,
         maxLength: maxLength,
+        textCapitalization: textCapitalization,
+        spellCheckConfiguration: const SpellCheckConfiguration(),
         decoration: InputDecoration(
           hintText: hint,
           border: InputBorder.none,
@@ -223,6 +232,7 @@ class SignUpView extends GetView<SignUpController> {
       String hint, {
         TextInputType keyboard = TextInputType.text,
         String? Function(String?)? validator,
+        TextCapitalization textCapitalization = TextCapitalization.words,
       }) {
     return Container(
       decoration: _box(),
@@ -230,6 +240,8 @@ class SignUpView extends GetView<SignUpController> {
         controller: ctrl,
         keyboardType: keyboard,
         validator: validator,
+        textCapitalization: textCapitalization,
+        spellCheckConfiguration: const SpellCheckConfiguration(),
         decoration: InputDecoration(
           hintText: hint,
           border: InputBorder.none,
@@ -278,26 +290,6 @@ class SignUpView extends GetView<SignUpController> {
     ));
   }
 
-  Widget _organizationDropdown() {
-    return Obx(() => Container(width: double.infinity,
-      decoration: _box(),
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: controller.organization.value,
-          items: [
-            "Company Name / College Name",
-            "Google",
-            "IIT Delhi"
-          ]
-              .map((e) =>
-              DropdownMenuItem(value: e, child: Text(e,style: TextStyle(fontFamily: AppConstants.fontFamily_Acre,fontWeight: FontWeight.normal),)))
-              .toList(),
-          onChanged: (v) => controller.organization.value = v!,
-        ),
-      ),
-    ));
-  }
 
   Widget _terms() {
     return Obx(() => Row(

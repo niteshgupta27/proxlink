@@ -4,6 +4,7 @@ import '../../../Utill/Apputills.dart';
 import '../../../Utill/app_base_client.dart';
 import '../../../Utill/app_storage.dart';
 import '../../../Utill/dialog_helper.dart';
+import '../../../routes/app_pages.dart';
 
 class NetworkController extends GetxController {
   final appStorage = Get.find<AppStorage>();
@@ -16,10 +17,12 @@ class NetworkController extends GetxController {
     required double speed,
     required bool isMoving,
   }) async {
+    String deviceId = await AppUtils.getDeviceId();
+
     try {
       final body = {
         "api_key": appStorage.loggedInUserToken,
-        "device_id": "DEVICE_ID",
+        "device_id": deviceId,
         "user_id": appStorage.loggedInUserId?.toString() ?? "0",
         "payload": {
           "accuracy_m": accuracy.toString(),
@@ -31,7 +34,7 @@ class NetworkController extends GetxController {
           "speed_mps": speed.toString()
         }
       };
-
+print(body);
       await BaseClient.sharedClient.postRequest(
         endPoint: AppConstants.location_update,
         body: body,
@@ -62,8 +65,10 @@ class NetworkController extends GetxController {
 
       //DialogHelper.hideLoading();
       isLoading.value = false;
-
+print(response.toString());
       if (response != null && response['status'] == 'success') {
+        Get.toNamed(Routes.memebersList,arguments: {"network_id":networkId,"view_as":"Guest","network_name":"not yet"});
+
         AppUtils.showSnackbar(response['message'] ?? "Joined successfully", "Success");
       } else {
         AppUtils.showSnackbar(response?['message'] ?? "Failed to join network", "Error");
