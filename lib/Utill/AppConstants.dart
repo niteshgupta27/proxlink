@@ -1,5 +1,5 @@
 class AppConstants {
-  static const String appName = 'proxlink';
+  static const String appName = 'nrby';
   static const double appVersion = 7.4;
   static const String fontFamily_ADLaM_Display = 'ADLaM Display';
   static const String fontFamily_Acre = 'Acre';

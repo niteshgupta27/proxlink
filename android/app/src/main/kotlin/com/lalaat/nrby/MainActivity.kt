@@ -1,4 +1,4 @@
-package com.nkg.proxlink
+package com.lalaat.nrby
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

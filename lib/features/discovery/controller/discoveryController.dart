@@ -1,20 +1,20 @@
 import 'dart:async';
-import 'dart:ui' as ui;
+import 'dart:ui';
+
+// import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' hide Cluster;
+import 'package:proxlink/Utill/Apputills.dart';
 import 'package:proxlink/Utill/app_colors.dart';
 import 'package:proxlink/Utill/app_storage.dart';
 import 'package:proxlink/features/discovery/model/discovery_Model.dart';
 import 'package:proxlink/features/discovery/services/discoveryService.dart';
-import 'package:proxlink/Utill/Apputills.dart';
 
-import '../../../routes/app_pages.dart';
-import '../../Chat/model/chat_list_model.dart';
-import '../../Chat/services/chat_service.dart';
-import '../view/discoveryView.dart';
 import '../../Chat/controller/chatController.dart';
+import '../view/discoveryView.dart';
 
 class DiscoveryController extends GetxController {
   final appStorage = Get.find<AppStorage>();
@@ -41,26 +41,24 @@ class DiscoveryController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    
+
     // Check if location is already available in storage
     if (appStorage.current_lat.value != 0.0) {
       initialLatLng = LatLng(appStorage.current_lat.value, appStorage.current_lng.value);
       isLocationReady.value = true;
       _initData();
     }
-    
+
     _handleLocationAndService();
     searchTextController.addListener(() {
       searchQuery.value = searchTextController.text;
     });
     _setupSearchDebounce();
-    
+
     // Listen to location changes and update map position & data
     everAll([appStorage.current_lat, appStorage.current_lng], (_) {
       if (mapController != null) {
-        mapController!.animateCamera(CameraUpdate.newLatLng(
-          LatLng(appStorage.current_lat.value, appStorage.current_lng.value),
-        ));
+        mapController!.animateCamera(CameraUpdate.newLatLng(LatLng(appStorage.current_lat.value, appStorage.current_lng.value)));
       }
       if (isLocationReady.value) {
         _initData();
@@ -93,10 +91,8 @@ class DiscoveryController extends GetxController {
     if (permission == LocationPermission.deniedForever) return;
 
     try {
-      Position position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
-      );
-      
+      Position position = await Geolocator.getCurrentPosition(locationSettings: const LocationSettings(accuracy: LocationAccuracy.high));
+
       // If we didn't have location yet, set it as initial
       if (!isLocationReady.value) {
         initialLatLng = LatLng(position.latitude, position.longitude);
@@ -115,11 +111,7 @@ class DiscoveryController extends GetxController {
 
   /// Initial data load
   void _initData() {
-    fetchDiscoveryUsers(
-      lat: appStorage.current_lat.value,
-      lng: appStorage.current_lng.value,
-      profession: searchTextController.text,
-    );
+    fetchDiscoveryUsers(lat: appStorage.current_lat.value, lng: appStorage.current_lng.value, profession: searchTextController.text);
   }
 
   /// Manages the debounced search logic
@@ -132,27 +124,13 @@ class DiscoveryController extends GetxController {
   }
 
   /// Main function to fetch discovery data and handle state
-  Future<void> fetchDiscoveryUsers({
-    required double lat,
-    required double lng,
-    String activeMinutes = "",
-    String maxPerGroup = "",
-    String profession = "",
-    String rangeKm = "",
-  }) async {
+  Future<void> fetchDiscoveryUsers({required double lat, required double lng, String activeMinutes = "", String maxPerGroup = "", String profession = "", String rangeKm = ""}) async {
     isLoading.value = true;
 
     final body = {
       "api_key": appStorage.loggedInUserToken,
       "user_id": appStorage.loggedInUserId?.toString() ?? "0",
-      "payload": {
-        "active_minutes": activeMinutes,
-        "lat": lat.toString(),
-        "lng": lng.toString(),
-        "max_per_group": maxPerGroup,
-        "profession": profession,
-        "range_km": rangeKm
-      }
+      "payload": {"active_minutes": activeMinutes, "lat": lat.toString(), "lng": lng.toString(), "max_per_group": maxPerGroup, "profession": profession, "range_km": rangeKm},
     };
 
     try {
@@ -166,14 +144,14 @@ class DiscoveryController extends GetxController {
 
   /// Handles the response dataset and updates state
   Future<void> _handleDiscoveryResponse(DiscoveryModelResponse response) async {
-   markers.clear();
+    markers.clear();
     if (response.status == "success") {
       clusterList.value = response.clusters;
       groupedUsers.value = response.groupedUsers;
       await updateMarkers();
     } else {
       Set<Marker> newMarkers = {};
-markers.assignAll(newMarkers);
+      markers.assignAll(newMarkers);
       AppUtils.showSnackbar("Failed to fetch discovery data", "Info");
     }
     isLoading.value = false;
@@ -185,10 +163,7 @@ markers.assignAll(newMarkers);
 
     for (var cluster in clusterList) {
       bool isSelected = selectedMarkerId.value == cluster.groupId;
-      final icon = await _createCustomMarkerIcon(
-        cluster.count.toString(),
-        isSelected ? AppColors.green : AppColors.primaryColor,
-      );
+      final icon = await _createCustomMarkerIcon(text: cluster.count.toString(), color: isSelected ? AppColors.green : AppColors.primaryColor);
 
       newMarkers.add(
         Marker(
@@ -207,44 +182,90 @@ markers.assignAll(newMarkers);
     markers.refresh();
   }
 
-  Future<BitmapDescriptor> _createCustomMarkerIcon(String label, Color color) async {
-    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
-    final Canvas canvas = Canvas(pictureRecorder);
-    const size = Size(50, 70);
+  Future<BitmapDescriptor> _createCustomMarkerIcon({required String text, required Color color}) async {
+    const double width = 34;
+    const double height = 42;
+    const double radius = 10;
 
-    final Paint paint = Paint()..color = color;
-    final Path path = Path();
-    path.moveTo(size.width / 2, size.height);
-    path.quadraticBezierTo(0, size.height * 0.4, 0, size.width / 2);
-    path.arcToPoint(Offset(size.width, size.width / 2), radius: Radius.circular(size.width / 2));
-    path.quadraticBezierTo(size.width, size.height * 0.4, size.width / 2, size.height);
+    final recorder = PictureRecorder();
+    final canvas = Canvas(recorder);
+
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+
+    final whitePaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+
+    final centerX = width / 2;
+    const centerY = 12.0;
+    // Pin shape
+    final path = Path();
+    // Top circle
+    path.addOval(Rect.fromCircle(center: Offset(centerX, centerY), radius: radius));
+    // Pin tail
+    path.moveTo(centerX - radius, centerY + 3);
+    path.quadraticBezierTo(centerX - radius, 26, centerX, height - 2);
+    path.quadraticBezierTo(centerX + radius, 26, centerX + radius, centerY + 3);
+    path.close();
     canvas.drawPath(path, paint);
-
-    canvas.drawCircle(Offset(size.width / 2, size.width / 2), size.width / 2.8, Paint()..color = Colors.white);
-
-    TextPainter textPainter = TextPainter(
+    // Inner white circle
+    canvas.drawCircle(Offset(centerX, centerY), 7.5, whitePaint);
+    // Count text
+    final textPainter = TextPainter(
       text: TextSpan(
-        text: label,
-        style: TextStyle(color: color, fontSize: 16, fontWeight: FontWeight.bold),
+        text: text,
+        style: TextStyle(color: color, fontSize: text.length >= 2 ? 10 : 12),
       ),
       textDirection: TextDirection.ltr,
-    )..layout();
-
-    textPainter.paint(canvas, Offset((size.width - textPainter.width) / 2, (size.width / 2 - textPainter.height / 2)));
-
-    final img = await pictureRecorder.endRecording().toImage(size.width.toInt(), size.height.toInt());
-    final data = await img.toByteData(format: ui.ImageByteFormat.png);
-    return BitmapDescriptor.bytes(data!.buffer.asUint8List());
+    );
+    textPainter.layout();
+    textPainter.paint(canvas, Offset(centerX - textPainter.width / 2, centerY - textPainter.height / 2));
+    final image = await recorder.endRecording().toImage(width.toInt(), height.toInt());
+    final byteData = await image.toByteData(format: ImageByteFormat.png);
+    return BitmapDescriptor.bytes(byteData!.buffer.asUint8List());
   }
+
+  // Future<BitmapDescriptor> _createCustomMarkerIcon({required String text, required Color color}) async {
+  //   const double size = 30; // Small marker
+  //
+  //   final PictureRecorder recorder = PictureRecorder();
+  //   final Canvas canvas = Canvas(recorder);
+  //
+  //   final Paint outerPaint = Paint()
+  //     ..color = color
+  //     ..style = PaintingStyle.fill;
+  //
+  //   final Paint innerPaint = Paint()
+  //     ..color = Colors.white
+  //     ..style = PaintingStyle.fill;
+  //
+  //   // Outer circle
+  //   canvas.drawCircle(Offset(size / 2, size / 2), size / 2, outerPaint);
+  //
+  //   // Inner circle
+  //   canvas.drawCircle(Offset(size / 2, size / 2), size / 2.8, innerPaint);
+  //
+  //   // Text
+  //   final textPainter = TextPainter(
+  //     text: TextSpan(
+  //       text: text,
+  //       style: const TextStyle(color: Colors.blue, fontSize: 14, fontWeight: FontWeight.bold),
+  //     ),
+  //     textDirection: TextDirection.ltr,
+  //   );
+  //   textPainter.layout();
+  //   textPainter.paint(canvas, Offset((size - textPainter.width) / 2, (size - textPainter.height) / 2));
+  //   final image = await recorder.endRecording().toImage(size.toInt(), size.toInt());
+  //   final byteData = await image.toByteData(format: ImageByteFormat.png);
+  //
+  //   return BitmapDescriptor.bytes(byteData!.buffer.asUint8List());
+  // }
 
   void _showContactBottomSheet(String groupId) {
     final users = groupedUsers[groupId] ?? [];
-    Get.bottomSheet(
-      ContactBottomSheet(users: users),
-      isDismissible: true,
-      enableDrag: true,
-      backgroundColor: Colors.transparent,
-    );
+    Get.bottomSheet(ContactBottomSheet(users: users), isDismissible: true, enableDrag: true, backgroundColor: Colors.transparent);
   }
 
   @override
