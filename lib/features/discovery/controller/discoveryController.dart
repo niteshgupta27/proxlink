@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'dart:ui';
 
 // import 'dart:ui' as ui;
@@ -199,16 +200,35 @@ class DiscoveryController extends GetxController {
       ..style = PaintingStyle.fill;
 
     final centerX = width / 2;
-    const centerY = 12.0;
-    // Pin shape
+    final centerY = radius;
+
+    // Pin shape - Single continuous path to ensure no transparency gaps
     final path = Path();
-    // Top circle
-    path.addOval(Rect.fromCircle(center: Offset(centerX, centerY), radius: radius));
-    // Pin tail
-    path.moveTo(centerX - radius, centerY + 3);
-    path.quadraticBezierTo(centerX - radius, 26, centerX, height - 2);
-    path.quadraticBezierTo(centerX + radius, 26, centerX + radius, centerY + 3);
+    // Start at the bottom tip
+    path.moveTo(centerX, height);
+    // Curve to the left side of the circle
+    path.quadraticBezierTo(
+      centerX - radius,
+      height * 0.6,
+      centerX - radius,
+      centerY,
+    );
+    // Draw the top circular arc
+    path.arcTo(
+      Rect.fromCircle(center: Offset(centerX, centerY), radius: radius),
+      math.pi,
+      math.pi,
+      false,
+    );
+    // Curve back down to the bottom tip
+    path.quadraticBezierTo(
+      centerX + radius,
+      height * 0.6,
+      centerX,
+      height,
+    );
     path.close();
+
     canvas.drawPath(path, paint);
     // Inner white circle
     canvas.drawCircle(Offset(centerX, centerY), 7.5, whitePaint);

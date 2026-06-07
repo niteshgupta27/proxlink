@@ -343,21 +343,25 @@ class CreateZoneView extends GetView<CreateZoneController> {
     return Obx(() => InkWell(
       onTap: controller.isLoading.value ? null : () => controller.createZone(),
       child: Container(
-        width: double.infinity,
-        height: 65,
         color: AppColors.primaryColor,
-        alignment: Alignment.center,
-        child: controller.isLoading.value
-            ? const CircularProgressIndicator(color: Colors.white)
-            : const Text(
-                "Create",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: AppConstants.fontFamily_Acre,
-                ),
-              ),
+        child: SafeArea(
+          child: Container(
+            width: double.infinity,
+            height: 65,
+            alignment: Alignment.center,
+            child: controller.isLoading.value
+                ? const CircularProgressIndicator(color: Colors.white)
+                : const Text(
+                    "Create",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: AppConstants.fontFamily_Acre,
+                    ),
+                  ),
+          ),
+        ),
       ),
     ));
   }

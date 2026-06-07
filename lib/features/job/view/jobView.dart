@@ -99,81 +99,124 @@ class JobView extends GetView<JobController> {
             top: 15,
             left: Dimensions.paddingSizeDefault,
             right: Dimensions.paddingSizeDefault,
-            child: Row(
+            child: Column(
               children: [
-                // Search Input Box
-                Expanded(
-                  child: Container(
-                    height: 55,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(Dimensions.radiusSizeTen),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
+                Row(
+                  children: [
+                    // Search Input Box
+                    Expanded(
+                      child: Container(
+                        height: 55,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(Dimensions.radiusSizeTen),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    child: TextField(
-                      controller: controller.searchTextController,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.search, color: Colors.black, size: 24),
-                        hintText: "Search Jobs",
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(vertical: 18),
-                        hintStyle: TextStyle(
-                          color: AppColors.textGrayColor,
-                          fontFamily: AppConstants.fontFamily_Acre,
-                          fontSize: Dimensions.fontSizeLarge,
-                          fontWeight: FontWeight.w500,
+                        child: TextField(
+                          controller: controller.searchTextController,
+                          decoration: const InputDecoration(
+                            prefixIcon: Icon(Icons.search, color: Colors.black, size: 24),
+                            hintText: "Search Jobs",
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(vertical: 18),
+                            hintStyle: TextStyle(
+                              color: AppColors.textGrayColor,
+                              fontFamily: AppConstants.fontFamily_Acre,
+                              fontSize: Dimensions.fontSizeLarge,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontFamily: AppConstants.fontFamily_Acre,
+                            fontSize: Dimensions.fontSizeLarge,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontFamily: AppConstants.fontFamily_Acre,
-                        fontSize: Dimensions.fontSizeLarge,
-                        fontWeight: FontWeight.w600,
+                    ),
+                    const SizedBox(width: 10),
+                    // Filter Button
+                    GestureDetector(
+                      onTap: () async {
+                        // Navigate to Filter / Search Job View and wait for result
+                        final result = await Get.toNamed(Routes.job_fitter);
+                        if (result != null && result is Map<String, dynamic>) {
+                          controller.fetchJobs(
+                            jobType: result['job_type'] ?? "",
+                            keywords: result['keywords'] ?? "",
+                            skills: result['skills'] ?? "",
+                            salaryMin: result['salary_min'] ?? "",
+                            salaryMax: result['salary_max'] ?? "",
+                          );
+                        }
+                      },
+                      child: Container(
+                        height: 55,
+                        width: 55,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(Dimensions.radiusSizeTen),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: const Center(
+                          child: Icon(Icons.tune, color: AppColors.primaryColor, size: 28),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-                const SizedBox(width: 10),
-                // Filter Button
-                GestureDetector(
-                  onTap: () async {
-                    // Navigate to Filter / Search Job View and wait for result
-                    final result = await Get.toNamed(Routes.job_fitter);
-                    if (result != null && result is Map<String, dynamic>) {
-                      controller.fetchJobs(
-                        jobType: result['job_type'] ?? "",
-                        keywords: result['keywords'] ?? "",
-                        skills: result['skills'] ?? "",
-                        salaryMin: result['salary_min'] ?? "",
-                        salaryMax: result['salary_max'] ?? "",
-                      );
-                    }
-                  },
-                  child: Container(
-                    height: 55,
-                    width: 55,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(Dimensions.radiusSizeTen),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
+                Obx(() => controller.showSuggestions.value
+                    ? Container(
+                        margin: const EdgeInsets.only(top: 5),
+                        constraints: BoxConstraints(maxHeight: Get.height * 0.3),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(Dimensions.radiusSizeTen),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    child: const Center(
-                      child: Icon(Icons.tune, color: AppColors.primaryColor, size: 28),
-                    ),
-                  ),
-                ),
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          padding: EdgeInsets.zero,
+                          itemCount: controller.suggestions.length,
+                          separatorBuilder: (context, index) => const Divider(height: 1),
+                          itemBuilder: (context, index) {
+                            final suggestion = controller.suggestions[index];
+                            return ListTile(
+                              title: Text(
+                                suggestion,
+                                style: const TextStyle(
+                                  fontFamily: AppConstants.fontFamily_Acre,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              onTap: () {
+                                controller.selectSuggestion(suggestion);
+                                FocusScope.of(context).unfocus();
+                              },
+                            );
+                          },
+                        ),
+                      )
+                    : const SizedBox.shrink()),
               ],
             ),
           ),

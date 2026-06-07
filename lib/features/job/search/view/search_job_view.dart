@@ -124,7 +124,7 @@ class SearchJobView extends GetView<SearchJobController> {
   Widget _buildJobTypeSelector() {
     return Obx(() => Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: ['Full Time', 'Part Time', 'Freelancer']
+      children: ['Full Time', 'Part Time', 'Freelancer','Internship']
           .map((type) => _buildCircularOption(
                 label: type,
                 isSelected: controller.selectedJobType.value == type,
@@ -179,28 +179,72 @@ class SearchJobView extends GetView<SearchJobController> {
   }
 
   Widget _buildJobTitleInput() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(Dimensions.radiusSizeMedium),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(Dimensions.radiusSizeMedium),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.03),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: TextField(
-        controller: controller.jobTitleController,
-        style: const TextStyle(fontFamily: AppConstants.fontFamily_Acre, fontSize: 15),
-        decoration: InputDecoration(
-          hintText: "Search jobs",
-          hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14, fontFamily: AppConstants.fontFamily_Acre),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          child: TextField(
+            controller: controller.jobTitleController,
+            style: const TextStyle(fontFamily: AppConstants.fontFamily_Acre, fontSize: 15),
+            decoration: InputDecoration(
+              hintText: "Search jobs",
+              hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14, fontFamily: AppConstants.fontFamily_Acre),
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+            ),
+          ),
         ),
-      ),
+        Obx(() => controller.showSuggestions.value
+            ? Container(
+                margin: const EdgeInsets.only(top: 5),
+                constraints: const BoxConstraints(maxHeight: 200),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(Dimensions.radiusSizeMedium),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.zero,
+                  itemCount: controller.suggestions.length,
+                  separatorBuilder: (context, index) => const Divider(height: 1),
+                  itemBuilder: (context, index) {
+                    final suggestion = controller.suggestions[index];
+                    return ListTile(
+                      title: Text(
+                        suggestion,
+                        style: const TextStyle(
+                          fontFamily: AppConstants.fontFamily_Acre,
+                          fontSize: 14,
+                        ),
+                      ),
+                      onTap: () {
+                        controller.selectSuggestion(suggestion);
+                        FocusScope.of(context).unfocus();
+                      },
+                    );
+                  },
+                ),
+              )
+            : const SizedBox.shrink()),
+      ],
     );
   }
 
@@ -278,8 +322,8 @@ class SearchJobView extends GetView<SearchJobController> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: const [
-            Text('\$30k', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 14)),
-            Text('\$100k', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 14)),
+            Text('30k', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 14)),
+            Text('100k', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 14)),
           ],
         ),
         const SizedBox(height: 5),
@@ -408,17 +452,21 @@ class SearchJobView extends GetView<SearchJobController> {
   Widget _buildSaveSearchButton() {
     return Container(
       color: AppColors.primaryColor,
-      width: double.infinity,
-      height: 65,
-      child: TextButton(
-        onPressed: () => controller.applyFilter(),
-        child: const Text(
-          "Save Search",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-            fontFamily: AppConstants.fontFamily_Acre,
+      child: SafeArea(
+        child: SizedBox(
+          width: double.infinity,
+          height: 65,
+          child: TextButton(
+            onPressed: () => controller.applyFilter(),
+            child: const Text(
+              "Save Search",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                fontFamily: AppConstants.fontFamily_Acre,
+              ),
+            ),
           ),
         ),
       ),

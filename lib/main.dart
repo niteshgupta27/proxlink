@@ -74,23 +74,11 @@ Future<void> initializeService() async {
   final service = FlutterBackgroundService();
   AppUtils.initFCM(true);
 
-  const AndroidNotificationChannel channel = AndroidNotificationChannel(
-    'my_foreground', 'PROXLINK SERVICE', 
-    importance: Importance.low
-  );
-
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.createNotificationChannel(channel);
-
   await service.configure(
     androidConfiguration: AndroidConfiguration(
       onStart: onStart,
       autoStart: true,
-      isForegroundMode: true,
-      notificationChannelId: 'my_foreground',
-      initialNotificationTitle: 'Proxlink Active',
-      initialNotificationContent: 'Initializing...',
-      foregroundServiceNotificationId: 888,
+      isForegroundMode: false,
     ),
     iosConfiguration: IosConfiguration(autoStart: true, onForeground: onStart, onBackground: onIosBackground),
   );

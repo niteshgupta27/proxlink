@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../../../Utill/AppConstants.dart';
 import '../../../../Utill/Dimensions.dart';
 import '../../../../Utill/app_colors.dart';
+import '../../../zone/view/location_picker_view.dart';
 import '../controller/post_job_controller.dart';
 
 class PostJobView extends GetView<PostJobController> {
@@ -84,6 +85,10 @@ class PostJobView extends GetView<PostJobController> {
                 _buildJobTypeCard(),
                 const SizedBox(height: 25),
 
+                _buildLabel("Work Location"),
+                _buildWorkLocationCard(),
+                const SizedBox(height: 25),
+
                 _buildLabel("Experience"),
                 _buildTextField(controller.experienceController, "Type here"),
                 const SizedBox(height: 25),
@@ -101,7 +106,7 @@ class PostJobView extends GetView<PostJobController> {
                 const SizedBox(height: 25),
 
                 _buildLabel("Office Location"),
-                _buildTextField(controller.officeLocationController, "Search on map"),
+                _buildLocationField(),
                 const SizedBox(height: 30),
               ],
             ),
@@ -134,6 +139,48 @@ class PostJobView extends GetView<PostJobController> {
       ),
     );
   }
+  Widget _buildLocationField() {
+    return GestureDetector(
+      onTap: () async {
+        final result = await Get.to(() => LocationPickerView(
+          initialLat: controller.selectedLat.value != 0 ? controller.selectedLat.value : 12.9716,
+          initialLng: controller.selectedLng.value != 0 ? controller.selectedLng.value : 77.5946,
+        ));
+
+        if (result != null && result is Map<String, dynamic>) {
+          controller.selectedLat.value = result['lat'];
+          controller.selectedLng.value = result['lng'];
+          controller.selectedAddress.value = result['address'];
+          controller.officeLocationController.value.text = result['address'];
+        }
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 15,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: TextField(
+          controller: controller.officeLocationController.value,
+          enabled: false, // User must click container to open map
+          style: const TextStyle(fontFamily: AppConstants.fontFamily_Acre),
+          decoration: InputDecoration(
+            hintText: "Select your Office location on the map",
+            hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 15),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+            border: InputBorder.none,
+            suffixIcon: const Icon(Icons.location_on, color: AppColors.primaryColor),
+          ),
+        ),
+      ),
+    );
+  }
 
   Widget _buildTextField(TextEditingController ctrl, String hint) {
     return Container(
@@ -162,7 +209,22 @@ class PostJobView extends GetView<PostJobController> {
   }
 
   Widget _buildJobTypeCard() {
-    final types = ['Full Time', 'Part Time', 'Freelancer'];
+    final types = ['Full Time', 'Part Time', 'Freelancer','Internship'];
+    return _buildSelectionCard(
+      options: types,
+      selectedOption: controller.selectedJobType,
+    );
+  }
+
+  Widget _buildWorkLocationCard() {
+    final locations = ['On Site', 'WFH', 'Hybrid'];
+    return _buildSelectionCard(
+      options: locations,
+      selectedOption: controller.selectedWorkLocation,
+    );
+  }
+
+  Widget _buildSelectionCard({required List<String> options, required RxString selectedOption}) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -176,15 +238,15 @@ class PostJobView extends GetView<PostJobController> {
         ],
       ),
       child: Column(
-        children: types.map((type) {
+        children: options.map((option) {
           return Obx(() {
-            bool isSelected = controller.selectedJobType.value == type;
+            bool isSelected = selectedOption.value == option;
             return InkWell(
-              onTap: () => controller.selectedJobType.value = type,
+              onTap: () => selectedOption.value = option,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
                 decoration: BoxDecoration(
-                  border: type != types.last
+                  border: option != options.last
                       ? Border(bottom: BorderSide(color: Colors.grey.shade100))
                       : null,
                 ),
@@ -192,7 +254,7 @@ class PostJobView extends GetView<PostJobController> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      type,
+                      option,
                       style: const TextStyle(
                         fontFamily: AppConstants.fontFamily_Acre,
                         fontSize: 15,
@@ -315,25 +377,29 @@ class PostJobView extends GetView<PostJobController> {
   Widget _buildBottomButton() {
     return Container(
       color: AppColors.primaryColor,
-      width: double.infinity,
-      height: 65,
-      child: TextButton(
-        onPressed: () => controller.submitJob(),
-        child: Obx(() => controller.isLoading.value
-            ? const SizedBox(
-                height: 25,
-                width: 25,
-                child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-              )
-            : const Text(
-                "Save",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: AppConstants.fontFamily_Acre,
-                ),
-              )),
+      child: SafeArea(
+        child: SizedBox(
+          height: 65,
+          width: double.infinity,
+          child: TextButton(
+            onPressed: () => controller.submitJob(),
+            child: Obx(() => controller.isLoading.value
+                ? const SizedBox(
+                    height: 25,
+                    width: 25,
+                    child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                  )
+                : const Text(
+                    "Save",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: AppConstants.fontFamily_Acre,
+                    ),
+                  )),
+          ),
+        ),
       ),
     );
   }

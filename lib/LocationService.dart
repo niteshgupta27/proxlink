@@ -43,7 +43,7 @@ class LocationService {
 
     print('LocationService: Distance since last update: $distance meters');
 
-    if (distance > 1) {
+    if (distance > 30) {
       print('LocationService: Distance > 5m, sending update...');
       _lastPosition = position;
       await _sendLocation(position);

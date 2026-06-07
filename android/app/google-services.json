@@ -30,6 +30,14 @@
           }
         },
         {
+          "client_id": "161804881791-stnramntugt815duvhsrc956ilghpmp9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lalaat.nrby",
+            "certificate_hash": "03cf69bd3985d87b349719777e440bc5db75e9e0"
+          }
+        },
+        {
           "client_id": "161804881791-o9u6uk82co29ncovnbs6rm5ndm138dtf.apps.googleusercontent.com",
           "client_type": 3
         }

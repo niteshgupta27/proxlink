@@ -14,11 +14,16 @@ class PostJobController extends GetxController {
   final educationController = TextEditingController();
   final salaryController = TextEditingController();
   final skillInputController = TextEditingController();
-  final officeLocationController = TextEditingController();
+  final officeLocationController = TextEditingController().obs;
 
   var selectedJobType = 'Full Time'.obs;
+  var selectedWorkLocation = 'On Site'.obs;
   var skills = <String>[].obs;
   var isLoading = false.obs;
+
+  var selectedLat = 0.0.obs;
+  var selectedLng = 0.0.obs;
+  var selectedAddress = "".obs;
 
   void addSkill(String skill) {
     String trimmedSkill = skill.trim();
@@ -41,6 +46,11 @@ class PostJobController extends GetxController {
   }
 
   Future<void> submitJob() async {
+    // Automatically add pending skill text if user hasn't pressed enter
+    if (skillInputController.text.trim().isNotEmpty) {
+      addSkill(skillInputController.text.trim());
+    }
+
     if (!_validateFields()) return;
 
     isLoading.value = true;
@@ -49,15 +59,16 @@ class PostJobController extends GetxController {
       "api_key": appStorage.loggedInUserToken,
       "user_id": appStorage.loggedInUserId?.toString() ?? "0",
       "payload": {
-        "address": officeLocationController.text,
+        "address": officeLocationController.value.text,
         "city": "", // Can be extracted if needed
         "company_name": companyNameController.text,
         "description": "", // Add a controller if description is needed
         "experience_max": "", 
         "experience_min": experienceController.text,
         "job_type": selectedJobType.value,
-        "lat": appStorage.current_lat.value.toString(),
-        "lng": appStorage.current_lng.value.toString(),
+        "work_location": selectedWorkLocation.value,
+        "lat": selectedLat.value.toString(),
+        "lng": selectedLng.value.toString(),
         "profession": "", 
         "salary_currency": "INR",
         "salary_max": "",
@@ -110,7 +121,7 @@ class PostJobController extends GetxController {
       AppUtils.showSnackbar("Error", "Please add at least one skill");
       return false;
     }
-    if (officeLocationController.text.isEmpty) {
+    if (officeLocationController.value.text.isEmpty) {
       AppUtils.showSnackbar("Error", "Please enter office location");
       return false;
     }
@@ -125,7 +136,7 @@ class PostJobController extends GetxController {
     educationController.dispose();
     salaryController.dispose();
     skillInputController.dispose();
-    officeLocationController.dispose();
+    officeLocationController.value.dispose();
     super.onClose();
   }
 }

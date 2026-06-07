@@ -7,6 +7,65 @@ class SearchJobController extends GetxController {
 
   // Job Title
   final jobTitleController = TextEditingController();
+  var searchQuery = "".obs;
+  var suggestions = <String>[].obs;
+  var showSuggestions = false.obs;
+  bool _isSelection = false;
+
+  final List<String> allSuggestions = [
+    "Software Engineer",
+    "Product Manager",
+    "Data Scientist",
+    "Designer",
+    "Marketing Manager",
+    "Sales Executive",
+    "HR Manager",
+    "Accountant",
+    "Doctor",
+    "Teacher",
+    "Flutter Developer",
+    "React Native Developer",
+    "Full Stack Developer",
+    "UI/UX Designer",
+    "Graphic Designer",
+    "Digital Marketer",
+    "Content Writer",
+    "Customer Support",
+  ];
+
+  @override
+  void onInit() {
+    super.onInit();
+    jobTitleController.addListener(() {
+      searchQuery.value = jobTitleController.text;
+    });
+    _setupSearchDebounce();
+  }
+
+  void selectSuggestion(String suggestion) {
+    _isSelection = true;
+    jobTitleController.text = suggestion;
+    showSuggestions.value = false;
+  }
+
+  void _setupSearchDebounce() {
+    debounce(searchQuery, (String value) {
+      if (_isSelection) {
+        _isSelection = false;
+        showSuggestions.value = false;
+        return;
+      }
+
+      if (value.isNotEmpty) {
+        suggestions.value = allSuggestions
+            .where((element) => element.toLowerCase().contains(value.toLowerCase()))
+            .toList();
+        showSuggestions.value = suggestions.isNotEmpty;
+      } else {
+        showSuggestions.value = false;
+      }
+    }, time: const Duration(milliseconds: 600));
+  }
 
   // Experience & Education
   var selectedExperience = RxnString();

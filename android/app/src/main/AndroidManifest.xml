@@ -62,7 +62,7 @@
 
         <provider
             android:name="com.facebook.FacebookContentProvider"
-            android:authorities="com.facebook.app.FacebookContentProvider254547338050959"
+            android:authorities="com.facebook.app.FacebookContentProvider@string/facebook_app_id"
             android:exported="true" />
     </application>
     <queries>

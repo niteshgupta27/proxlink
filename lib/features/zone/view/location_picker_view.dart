@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -21,7 +22,9 @@ class _LocationPickerViewState extends State<LocationPickerView> {
   GoogleMapController? _mapController;
   final TextEditingController _searchController = TextEditingController();
   List<dynamic> _predictions = [];
-  bool _isSearching = false;
+  bool _isLoading = false;
+  Timer? _debounce;
+  bool _isMovingCamera = false;
 
   // Use the API key from your AndroidManifest.xml
   final String _googleMapsApiKey = "AIzaSyCNgvQKquXLYt3Mpk5ZeQesyGLkSK-mtQI";
@@ -30,6 +33,24 @@ class _LocationPickerViewState extends State<LocationPickerView> {
   void initState() {
     super.initState();
     _selectedLocation = LatLng(widget.initialLat, widget.initialLng);
+    // Fetch initial address if we have coordinates
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _getAddressFromLatLng(_selectedLocation);
+    });
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      _searchPlaces(query);
+    });
   }
 
   Future<void> _searchPlaces(String query) async {
@@ -58,7 +79,42 @@ class _LocationPickerViewState extends State<LocationPickerView> {
     }
   }
 
+  Future<void> _getAddressFromLatLng(LatLng position) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final url =
+        "https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.latitude},${position.longitude}&key=$_googleMapsApiKey";
+
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['status'] == 'OK' && data['results'].isNotEmpty) {
+          final address = data['results'][0]['formatted_address'];
+          setState(() {
+            _searchController.text = address;
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint("Error reverse geocoding: $e");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   Future<void> _getPlaceDetails(String placeId) async {
+    // Hide keyboard and results
+    FocusScope.of(context).unfocus();
+    setState(() {
+      _predictions = [];
+      _isLoading = true;
+    });
+
     final url =
         "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$_googleMapsApiKey";
 
@@ -72,18 +128,24 @@ class _LocationPickerViewState extends State<LocationPickerView> {
           final address = data['result']['formatted_address'];
 
           final newLocation = LatLng(lat, lng);
-          _mapController?.animateCamera(CameraUpdate.newLatLng(newLocation));
-
+          _isMovingCamera = true; // Prevent reverse geocode during programmatic move
+          await _mapController?.animateCamera(CameraUpdate.newLatLng(newLocation));
+          
           setState(() {
             _selectedLocation = newLocation;
             _searchController.text = address;
-            _predictions = [];
-            _isSearching = false;
           });
         }
       }
     } catch (e) {
       debugPrint("Error fetching place details: $e");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+      Future.delayed(const Duration(milliseconds: 500), () {
+        _isMovingCamera = false;
+      });
     }
   }
 
@@ -126,15 +188,35 @@ class _LocationPickerViewState extends State<LocationPickerView> {
             onMapCreated: (controller) => _mapController = controller,
             onCameraMove: (position) {
               _selectedLocation = position.target;
+              if (_predictions.isNotEmpty) {
+                setState(() {
+                  _predictions = [];
+                });
+              }
+            },
+            onCameraIdle: () {
+              if (!_isMovingCamera) {
+                _getAddressFromLatLng(_selectedLocation);
+              }
+            },
+            onTap: (_) {
+              FocusScope.of(context).unfocus();
+              setState(() {
+                _predictions = [];
+              });
             },
             myLocationEnabled: true,
             myLocationButtonEnabled: true,
+            padding: const EdgeInsets.only(top: 100), // Move my location button down
           ),
           const Center(
-            child: Icon(
-              Icons.location_on,
-              color: AppColors.primaryColor,
-              size: 40,
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 35), // Offset for pin point
+              child: Icon(
+                Icons.location_on,
+                color: AppColors.primaryColor,
+                size: 45,
+              ),
             ),
           ),
           // Search Bar
@@ -147,16 +229,22 @@ class _LocationPickerViewState extends State<LocationPickerView> {
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(12),
                     boxShadow: const [
                       BoxShadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, 2))
                     ],
                   ),
                   child: TextField(
                     controller: _searchController,
+                    onChanged: _onSearchChanged,
                     decoration: InputDecoration(
                       hintText: "Search location...",
-                      prefixIcon: const Icon(Icons.search),
+                      prefixIcon: _isLoading 
+                        ? const Padding(
+                            padding: EdgeInsets.all(12),
+                            child: SizedBox(width: 10, height: 10, child: CircularProgressIndicator(strokeWidth: 2)),
+                          )
+                        : const Icon(Icons.search, color: AppColors.primaryColor),
                       suffixIcon: _searchController.text.isNotEmpty
                           ? IconButton(
                               icon: const Icon(Icons.clear),
@@ -171,30 +259,28 @@ class _LocationPickerViewState extends State<LocationPickerView> {
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.symmetric(vertical: 15),
                     ),
-                    onChanged: (value) {
-                      _searchPlaces(value);
-                    },
                   ),
                 ),
                 if (_predictions.isNotEmpty)
                   Container(
                     margin: const EdgeInsets.only(top: 5),
+                    constraints: BoxConstraints(maxHeight: Get.height * 0.4),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(12),
                       boxShadow: const [
                         BoxShadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, 2))
                       ],
                     ),
                     child: ListView.separated(
                       shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
                       itemCount: _predictions.length,
                       separatorBuilder: (context, index) => const Divider(height: 1),
                       itemBuilder: (context, index) {
                         final prediction = _predictions[index];
                         return ListTile(
-                          title: Text(prediction['description']),
+                          leading: const Icon(Icons.location_on_outlined, color: Colors.grey),
+                          title: Text(prediction['description'], style: const TextStyle(fontSize: 14)),
                           onTap: () => _getPlaceDetails(prediction['place_id']),
                         );
                       },

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -29,6 +30,30 @@ class JobController extends GetxController {
   // Search logic
   var searchQuery = "".obs;
   final TextEditingController searchTextController = TextEditingController();
+  var suggestions = <String>[].obs;
+  var showSuggestions = false.obs;
+  bool _isSelection = false;
+
+  final List<String> allSuggestions = [
+    "Software Engineer",
+    "Product Manager",
+    "Data Scientist",
+    "Designer",
+    "Marketing Manager",
+    "Sales Executive",
+    "HR Manager",
+    "Accountant",
+    "Doctor",
+    "Teacher",
+    "Flutter Developer",
+    "React Native Developer",
+    "Full Stack Developer",
+    "UI/UX Designer",
+    "Graphic Designer",
+    "Digital Marketer",
+    "Content Writer",
+    "Customer Support",
+  ];
 
   @override
   void onInit() {
@@ -98,9 +123,31 @@ class JobController extends GetxController {
     }
   }
 
+  void selectSuggestion(String suggestion) {
+    _isSelection = true;
+    searchTextController.text = suggestion;
+    showSuggestions.value = false;
+    // fetchJobs is called by debounce
+  }
+
   /// Manages the debounced search logic
   void _setupSearchDebounce() {
     debounce(searchQuery, (String value) {
+      if (_isSelection) {
+        _isSelection = false;
+        showSuggestions.value = false;
+        fetchJobs(keywords: value);
+        return;
+      }
+
+      if (value.isNotEmpty) {
+        suggestions.value = allSuggestions
+            .where((element) => element.toLowerCase().contains(value.toLowerCase()))
+            .toList();
+        showSuggestions.value = suggestions.isNotEmpty;
+      } else {
+        showSuggestions.value = false;
+      }
       fetchJobs(keywords: value);
     }, time: const Duration(milliseconds: 600));
   }
@@ -185,31 +232,72 @@ print(body);
   }
 
   Future<BitmapDescriptor> _createCustomMarkerIcon(String label, Color color) async {
-    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
-    final Canvas canvas = Canvas(pictureRecorder);
-    const size = Size(50, 70);
+    const double width = 34;
+    const double height = 42;
+    const double radius = 10;
 
-    final Paint paint = Paint()..color = color;
-    final Path path = Path();
-    path.moveTo(size.width / 2, size.height);
-    path.quadraticBezierTo(0, size.height * 0.4, 0, size.width / 2);
-    path.arcToPoint(Offset(size.width, size.width / 2), radius: Radius.circular(size.width / 2));
-    path.quadraticBezierTo(size.width, size.height * 0.4, size.width / 2, size.height);
+    final recorder = ui.PictureRecorder();
+    final canvas = ui.Canvas(recorder);
+
+    final paint = ui.Paint()
+      ..color = color
+      ..style = ui.PaintingStyle.fill;
+
+    final whitePaint = ui.Paint()
+      ..color = Colors.white
+      ..style = ui.PaintingStyle.fill;
+
+    final centerX = width / 2;
+    final centerY = radius;
+
+    // Pin shape - Single continuous path to ensure no transparency gaps
+    final path = ui.Path();
+    // Start at the bottom tip
+    path.moveTo(centerX, height);
+    // Curve to the left side of the circle
+    path.quadraticBezierTo(
+      centerX - radius,
+      height * 0.6,
+      centerX - radius,
+      centerY,
+    );
+    // Draw the top circular arc
+    path.arcTo(
+      Rect.fromCircle(center: Offset(centerX, centerY), radius: radius),
+      math.pi,
+      math.pi,
+      false,
+    );
+    // Curve back down to the bottom tip
+    path.quadraticBezierTo(
+      centerX + radius,
+      height * 0.6,
+      centerX,
+      height,
+    );
+    path.close();
+
     canvas.drawPath(path, paint);
 
-    canvas.drawCircle(Offset(size.width / 2, size.width / 2), size.width / 2.8, Paint()..color = Colors.white);
+    // Inner white circle
+    canvas.drawCircle(Offset(centerX, centerY), 7.5, whitePaint);
 
-    TextPainter textPainter = TextPainter(
+    // Count text
+    final textPainter = TextPainter(
       text: TextSpan(
         text: label,
-        style: TextStyle(color: color, fontSize: 16, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          color: color,
+          fontSize: (label.length >= 2 ? 10 : 12),
+          fontWeight: FontWeight.bold,
+        ),
       ),
       textDirection: TextDirection.ltr,
-    )..layout();
+    );
+    textPainter.layout();
+    textPainter.paint(canvas, ui.Offset(centerX - textPainter.width / 2, centerY - textPainter.height / 2));
 
-    textPainter.paint(canvas, Offset((size.width - textPainter.width) / 2, (size.width / 2 - textPainter.height / 2)));
-
-    final img = await pictureRecorder.endRecording().toImage(size.width.toInt(), size.height.toInt());
+    final img = await recorder.endRecording().toImage(width.toInt(), height.toInt());
     final data = await img.toByteData(format: ui.ImageByteFormat.png);
     return BitmapDescriptor.bytes(data!.buffer.asUint8List());
   }
