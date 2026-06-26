@@ -2,7 +2,7 @@ class LoginResponse {
  // bool? success;
   String? message;
   int? Numberverification;
-  dynamic? data;
+  dynamic data;
   int? Registration;
 
   LoginResponse({

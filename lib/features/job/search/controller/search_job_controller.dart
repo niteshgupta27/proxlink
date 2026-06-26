@@ -77,15 +77,17 @@ class SearchJobController extends GetxController {
   var salaryRange = const RangeValues(50000, 80000).obs;
 
   // Skill Sets
-  var skills = <String>[
-    'Java',
-    '.NET',
-    'Marketing',
-    'Prompt Expert',
-    'Digital Marketing',
-    'CRM'
-  ].obs;
+  var skills = <String>[].obs;
   final skillInputController = TextEditingController();
+  final skillFocusNode = FocusNode();
+
+  @override
+  void onReady() {
+    super.onReady();
+    if (skills.isEmpty) {
+      skillFocusNode.requestFocus();
+    }
+  }
 
   void addSkill(String skill) {
     if (skill.isNotEmpty && !skills.contains(skill)) {

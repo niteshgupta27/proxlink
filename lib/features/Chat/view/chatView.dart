@@ -1,15 +1,8 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:proxlink/features/discovery/controller/discoveryController.dart';
 
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_state_manager/src/simple/get_view.dart';
-import 'package:proxlink/common/widget/custom_popup_menu_item.dart';
-import '../../../Utill/Images.dart';
 import '../../../Utill/app_colors.dart';
-import '../../../Utill/app_required.dart';
 import '../../../common/widget/custom_loader_widget.dart';
 import '../../../routes/app_pages.dart';
 import '../controller/chatController.dart';
@@ -27,7 +20,7 @@ class ChatView extends GetView<ChatController> {
       title: const Text("Messages", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
       actions: [
         IconButton(icon: const Icon(Icons.search, color: Colors.white), onPressed: () {}),
-        const CustomPopupMenu(),
+        // const CustomPopupMenu(),
       ],
     ),
       backgroundColor: AppColors.whites,
@@ -54,7 +47,7 @@ class ChatView extends GetView<ChatController> {
                       ),
                       leading: CircleAvatar(
                         radius: context.responsiveValue(mobile: 28.0, tablet: 35.0),
-                        backgroundColor: AppColors.primaryColor.withOpacity(0.2),
+                        backgroundColor: AppColors.primaryColor.withValues(alpha: 0.2),
                         backgroundImage: chat.otherUserImage != null && chat.otherUserImage!.isNotEmpty
                             ? NetworkImage(chat.otherUserImage!)
                             : null,

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
-import 'package:proxlink/common/widget/custom_popup_menu_item.dart';
 
 import '../../../Utill/AppConstants.dart';
 import '../../../Utill/Images.dart';
@@ -31,7 +30,7 @@ class NetworkView extends GetView<NetworkController> {
         ),
       ),
       actions: [
-        CustomPopupMenu(),
+        // CustomPopupMenu(),
       ],
     ),
       body: Container(
@@ -97,10 +96,8 @@ class NetworkView extends GetView<NetworkController> {
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              SvgPicture.asset(Images.logo, width: 41, height: 41),
-              const SizedBox(width: 8),
               const Text(
-                'ProxiLink',
+                'nrby',
                 style: TextStyle(fontFamily: AppConstants.fontFamily_ADLaM_Display, fontSize: 23, fontWeight: FontWeight.normal, color: AppColors.whites, height: 1.6),
               ),
             ],
@@ -129,7 +126,7 @@ class NetworkView extends GetView<NetworkController> {
                 ),
               ),
               const SizedBox(width: 1),
-              const CustomPopupMenu(),
+              // const CustomPopupMenu(),
             ],
           ),
         ],
@@ -144,7 +141,7 @@ class NetworkView extends GetView<NetworkController> {
         text: TextSpan(
           style: TextStyle(color: AppColors.whites, fontFamily: AppConstants.fontFamily_Acre, fontSize: 16, fontWeight: FontWeight.normal),
           children: [
-            TextSpan(text: title.split(" ").sublist(0, title.split(" ").length - 1).join(" ") + " "),
+            TextSpan(text: "${title.split(" ").sublist(0, title.split(" ").length - 1).join(" ")} "),
             TextSpan(
               text: title.split(" ").last,
               style: TextStyle(fontWeight: FontWeight.bold),
@@ -198,10 +195,10 @@ class NetworkView extends GetView<NetworkController> {
         } else if (Actioncode == "2") {
           var result = await Get.toNamed(Routes.Addevent);
           if (result != null) {
-            String network_id = result['network_id'];
-            String network_name = result['network_name'];
-            print(network_name);
-            Get.toNamed(Routes.shearqr, arguments: {"network_id": network_id, "network_name": network_name});
+            String networkId = result['network_id'];
+            String networkName = result['network_name'];
+            print(networkName);
+            Get.toNamed(Routes.shearqr, arguments: {"network_id": networkId, "network_name": networkName});
           }
         } else if (Actioncode == "3") {
           Get.toNamed(Routes.EventList, arguments: {"view_as": "HOST"});

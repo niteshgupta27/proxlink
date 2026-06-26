@@ -87,7 +87,7 @@ class ChatDetailController extends GetxController {
         apiKey: appStorage.loggedInUserToken,
       );
 
-      if (response != null && response.status == 'success') {
+      if (response.status == 'success') {
         final newMessages = response.messages ?? [];
         if (newMessages.length != messages.length || 
             (newMessages.isNotEmpty && messages.isNotEmpty && newMessages.last.messageId != messages.last.messageId)) {

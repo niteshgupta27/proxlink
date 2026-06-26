@@ -3,7 +3,7 @@ import 'dart:math' as math show sin, pi;
 
 class CustomLoaderWidget extends StatefulWidget {
   const CustomLoaderWidget({
-    Key? key,
+    super.key,
     this.color,
     this.size = 50.0,
     this.itemBuilder,
@@ -11,8 +11,7 @@ class CustomLoaderWidget extends StatefulWidget {
     this.controller,
   })  : assert(!(itemBuilder is IndexedWidgetBuilder && color is Color)
       && !(itemBuilder == null && color == null),
-  'You should specify either a itemBuilder or a color'),
-        super(key: key);
+  'You should specify either a itemBuilder or a color');
 
   final Color? color;
   final double size;
@@ -76,7 +75,7 @@ class _CustomLoaderWidgetState extends State<CustomLoaderWidget> with SingleTick
 }
 
 class DelayTween extends Tween<double> {
-  DelayTween({double? begin, double? end, required this.delay}) : super(begin: begin, end: end);
+  DelayTween({super.begin, super.end, required this.delay});
 
   final double delay;
 

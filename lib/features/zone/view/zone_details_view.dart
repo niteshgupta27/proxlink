@@ -56,7 +56,7 @@ class ZoneDetailsView extends GetView<ZoneDetailsController> {
                 elevation: 0,
               ),
               child: const Text(
-                "Join a Zone",
+                "Join Zone",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontFamily: AppConstants.fontFamily_Acre,
@@ -116,7 +116,7 @@ class ZoneDetailsView extends GetView<ZoneDetailsController> {
                         zone.purpose ?? '',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withValues(alpha: 0.9),
                           fontSize: 16,
                           fontFamily: AppConstants.fontFamily_Acre,
                         ),
@@ -136,7 +136,7 @@ class ZoneDetailsView extends GetView<ZoneDetailsController> {
                               TextSpan(
                                 text: "Create By : ",
                                 style: TextStyle(
-                                  color: Colors.white.withOpacity(0.8),
+                                  color: Colors.white.withValues(alpha: 0.8),
                                   fontSize: 16,
                                   fontFamily: AppConstants.fontFamily_Acre,
                                 ),
@@ -239,7 +239,7 @@ class ZoneDetailsView extends GetView<ZoneDetailsController> {
             height: 220,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.1),
             ),
           ),
           Container(
@@ -247,7 +247,7 @@ class ZoneDetailsView extends GetView<ZoneDetailsController> {
             height: 170,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
             ),
           ),
           // Inner White Circle

@@ -1,10 +1,9 @@
-import 'package:proxlink/Utill/app_required.dart';
 
 import '../../../Utill/AppConstants.dart';
 import '../../../Utill/app_base_client.dart';
 import '../Login/models/SocialResponse.dart';
 import '../Login/models/login_response.dart';
-import '../Otp/model/otpresponse.dart';
+import '../Login/models/otpresponse.dart';
 
 class AuthServices {
   String TAG = "AuthServices";

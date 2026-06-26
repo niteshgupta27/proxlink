@@ -1,4 +1,5 @@
-import '../../Otp/model/otpresponse.dart';
+
+import 'otpresponse.dart';
 
 class SocialResponse {
   final String status;

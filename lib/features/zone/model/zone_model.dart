@@ -108,7 +108,7 @@ class ZoneData {
       zoneType: json['zone_type'] ?? '',
       distanceM: (json['distance_m'] as num?)?.toDouble() ?? 0.0,
       skills: json['skills'] is List ? List<String>.from(json['skills']) : [],
-      isMember: json['is_member'] == 1,
+      isMember: json['is_member'] == 1?true:false,
     );
   }
 }

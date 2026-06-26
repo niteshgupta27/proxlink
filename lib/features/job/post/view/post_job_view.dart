@@ -113,7 +113,7 @@ class PostJobView extends GetView<PostJobController> {
           ),
           Obx(() => controller.isLoading.value
               ? Container(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha: 0.3),
                   child: const Center(
                     child: CircularProgressIndicator(color: AppColors.primaryColor),
                   ),
@@ -160,7 +160,7 @@ class PostJobView extends GetView<PostJobController> {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.06),
+              color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 15,
               offset: const Offset(0, 4),
             ),
@@ -189,7 +189,7 @@ class PostJobView extends GetView<PostJobController> {
         borderRadius: BorderRadius.circular(Dimensions.radiusSizeMedium),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -231,7 +231,7 @@ class PostJobView extends GetView<PostJobController> {
         borderRadius: BorderRadius.circular(Dimensions.radiusSizeMedium),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -295,7 +295,7 @@ class PostJobView extends GetView<PostJobController> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),

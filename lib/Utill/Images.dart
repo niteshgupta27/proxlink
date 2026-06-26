@@ -4,7 +4,7 @@ class Images {
   // TODO NEW IMAGES 18-FEB-2025
   static const String wave_circle = 'assets/images/wave-circle.svg';
   static const String illustration = 'assets/images/illustration.png';
-  static const String logo = 'assets/images/logo.svg';
+  //static const String logo = 'assets/images/logo.svg';
   static const String google = 'assets/images/google-icon.svg';
   static const String facebook = 'assets/images/facebook-icon.svg';
   static const String splash = 'assets/images/splash.png';

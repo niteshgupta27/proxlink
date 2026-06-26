@@ -2,7 +2,6 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/bindings_interface.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
-import 'package:proxlink/features/auth/Otp/view/Otpview.dart';
 import 'package:proxlink/features/auth/signup/view/SignUpView.dart';
 import 'package:proxlink/features/bottomNavigation/bindings/BottomNavigationBindings.dart';
 import 'package:proxlink/features/event/bindings/AddeventBindings.dart';
@@ -20,7 +19,6 @@ import 'package:proxlink/features/zone/view/create_zone_view.dart';
 import 'package:proxlink/features/zone/view/my_zones_view.dart';
 import 'package:proxlink/features/zone/view/zone_details_view.dart';
 
-import '../Utill/ErrorView.dart';
 import '../Utill/app_required.dart';
 
 import '../features/auth/Login/view/login_view.dart';
@@ -56,11 +54,7 @@ class AppPages {
         page: () => const LoginView(),
         binding: AuthBindings()
     ),
-    GetPage(
-        name: _Paths.OTPSCREEN,
-        page: () => const OtpView(),
-        binding: AuthBindings()
-    ),
+
     GetPage(
         name: _Paths.SignUpSCREEN,
         page: () => const SignUpView(),

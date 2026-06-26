@@ -1,10 +1,7 @@
 
-import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 
 import '../../../../Utill/AppConstants.dart';
 import '../../../../Utill/Apputills.dart';
@@ -29,6 +26,14 @@ class SignUpController extends GetxController {
 
   final formKey = GlobalKey<FormState>();
   var loginServices = Get.find<AuthServices>();
+
+  @override
+  void onInit() {
+    super.onInit();
+    if (Get.parameters['name'] != null) {
+      nameCtrl.text = Get.parameters['name']!;
+    }
+  }
 
   void submit() {
     if (!agree.value) {

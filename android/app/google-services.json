@@ -1,28 +1,28 @@
 {
   "project_info": {
-    "project_number": "161804881791",
-    "project_id": "prolinkprolink-377d3",
-    "storage_bucket": "prolinkprolink-377d3.firebasestorage.app"
+    "project_number": "1024229442086",
+    "project_id": "lalaat-app",
+    "storage_bucket": "lalaat-app.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:161804881791:android:32e45a2d092d224e98544a",
+        "mobilesdk_app_id": "1:1024229442086:android:aab3cb474542e7d1a95ce7",
         "android_client_info": {
           "package_name": "com.lalaat.nrby"
         }
       },
       "oauth_client": [
         {
-          "client_id": "161804881791-df0i42hkhtmqgdrl12t8n4chcvsm85ht.apps.googleusercontent.com",
+          "client_id": "1024229442086-fe5lp658jlfb0r3rf97stosou7p7npv4.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.lalaat.nrby",
-            "certificate_hash": "336245fe0cf60122146c47b1a4bb57aa35924776"
+            "certificate_hash": "94635a1eb2b18b8239ad7fd8d47201151e709c76"
           }
         },
         {
-          "client_id": "161804881791-mmggo0fk614eant5f903ha3o1v1neost.apps.googleusercontent.com",
+          "client_id": "1024229442086-ljir9g6hampg4j8tuoo62rrv5sjcpveq.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.lalaat.nrby",
@@ -30,95 +30,35 @@
           }
         },
         {
-          "client_id": "161804881791-stnramntugt815duvhsrc956ilghpmp9.apps.googleusercontent.com",
+          "client_id": "1024229442086-oebf25ub03v4tjmr43r6nqvs3mitk4si.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.lalaat.nrby",
-            "certificate_hash": "03cf69bd3985d87b349719777e440bc5db75e9e0"
+            "certificate_hash": "bb1368c3b1da467098efd1fde743f93f2102822c"
           }
         },
         {
-          "client_id": "161804881791-o9u6uk82co29ncovnbs6rm5ndm138dtf.apps.googleusercontent.com",
+          "client_id": "1024229442086-eel0b455sehhi5s2krtq4lg7rm1olets.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyA4SipTFPJYYJEbnTL_OC9mptXuFaNnr94"
+          "current_key": "AIzaSyDmXNCyAgnZY4f4HVJ9blQDHp0gDqXf26Y"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "161804881791-o9u6uk82co29ncovnbs6rm5ndm138dtf.apps.googleusercontent.com",
+              "client_id": "1024229442086-eel0b455sehhi5s2krtq4lg7rm1olets.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "161804881791-54rg3bde5g5kl8mbr8f1ajhj3gaa6nv3.apps.googleusercontent.com",
+              "client_id": "1024229442086-uhr120o0r8a6o291tectjvl40uk3vva4.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.nkg.proxlink"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:161804881791:android:f9540fee5ea7815998544a",
-        "android_client_info": {
-          "package_name": "com.nkg.proxlink"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "161804881791-0l1k0idcihmhfchoegn24djs5lgh2vn9.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.nkg.proxlink",
-            "certificate_hash": "0c6a011e7b091b5a2f8ad17930699af15ed7d6a4"
-          }
-        },
-        {
-          "client_id": "161804881791-25n8ehp5qkh9rj21satg89364jfv286v.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.nkg.proxlink",
-            "certificate_hash": "03cf69bd3985d87b349719777e440bc5db75e9e0"
-          }
-        },
-        {
-          "client_id": "161804881791-s044ea2p84k1gpmb8uibk7onlsj18784.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.nkg.proxlink",
-            "certificate_hash": "336245fe0cf60122146c47b1a4bb57aa35924776"
-          }
-        },
-        {
-          "client_id": "161804881791-o9u6uk82co29ncovnbs6rm5ndm138dtf.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyA4SipTFPJYYJEbnTL_OC9mptXuFaNnr94"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "161804881791-o9u6uk82co29ncovnbs6rm5ndm138dtf.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "161804881791-54rg3bde5g5kl8mbr8f1ajhj3gaa6nv3.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.nkg.proxlink"
+                "bundle_id": "com.lalaat.nrby"
               }
             }
           ]

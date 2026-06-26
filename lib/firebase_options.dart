@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -25,9 +28,15 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
-        return windows;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for windows - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -40,49 +49,21 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDAf-NUb_zZVsJkblHmLLvFaoNu1mKZUeo',
-    appId: '1:1041800447511:web:98c833b524be3d2d8ebe52',
-    messagingSenderId: '1041800447511',
-    projectId: 'serggo-e3be2',
-    authDomain: 'serggo-e3be2.firebaseapp.com',
-    storageBucket: 'serggo-e3be2.appspot.com',
-    measurementId: 'G-W0TGBZYS0F',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyD_of1FUz7y4rbdyQow8XBR-cYcWN9ZeGk',
-    appId: '1:1041800447511:android:cefaf3178e6450bf8ebe52',
-    messagingSenderId: '1041800447511',
-    projectId: 'serggo-e3be2',
-    storageBucket: 'serggo-e3be2.appspot.com',
+    apiKey: 'AIzaSyDmXNCyAgnZY4f4HVJ9blQDHp0gDqXf26Y',
+    appId: '1:1024229442086:android:aab3cb474542e7d1a95ce7',
+    messagingSenderId: '1024229442086',
+    projectId: 'lalaat-app',
+    storageBucket: 'lalaat-app.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDo5FZE35HLjv6r3jSPxUcB4wsMuWamWV0',
-    appId: '1:1041800447511:ios:4670e9ccc80c504e8ebe52',
-    messagingSenderId: '1041800447511',
-    projectId: 'serggo-e3be2',
-    storageBucket: 'serggo-e3be2.appspot.com',
-    iosBundleId: 'com.user.serggo',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDo5FZE35HLjv6r3jSPxUcB4wsMuWamWV0',
-    appId: '1:1041800447511:ios:4670e9ccc80c504e8ebe52',
-    messagingSenderId: '1041800447511',
-    projectId: 'serggo-e3be2',
-    storageBucket: 'serggo-e3be2.appspot.com',
-    iosBundleId: 'com.user.serggo',
-  );
-
-  static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyDAf-NUb_zZVsJkblHmLLvFaoNu1mKZUeo',
-    appId: '1:1041800447511:web:74a879e52127be848ebe52',
-    messagingSenderId: '1041800447511',
-    projectId: 'serggo-e3be2',
-    authDomain: 'serggo-e3be2.firebaseapp.com',
-    storageBucket: 'serggo-e3be2.appspot.com',
-    measurementId: 'G-326PTG5WMS',
+    apiKey: 'AIzaSyDa_WqhDhNIRPGnH8VOYnVVCg3waxpVFjs',
+    appId: '1:1024229442086:ios:ec5fb3b4fdb45431a95ce7',
+    messagingSenderId: '1024229442086',
+    projectId: 'lalaat-app',
+    storageBucket: 'lalaat-app.firebasestorage.app',
+    iosClientId: '1024229442086-uhr120o0r8a6o291tectjvl40uk3vva4.apps.googleusercontent.com',
+    iosBundleId: 'com.lalaat.nrby',
   );
 }

@@ -8,9 +8,7 @@ import 'package:proxlink/Utill/app_colors.dart';
 import 'package:proxlink/Utill/app_storage.dart';
 import 'package:proxlink/features/zone/model/zone_model.dart' as model;
 import 'package:proxlink/features/zone/service/zone_service.dart';
-import 'package:proxlink/routes/app_pages.dart';
 import '../view/zone_view.dart';
-import 'package:collection/collection.dart';
 
 class ZoneController extends GetxController {
   final appStorage = Get.find<AppStorage>();
@@ -31,18 +29,41 @@ class ZoneController extends GetxController {
   var groupedZones = <String, List<model.ZoneData>>{}.obs;
   RxList<model.ZoneData> allZoneList = <model.ZoneData>[].obs;
 
+  // Search logic
+  final TextEditingController searchTextController = TextEditingController();
+  var searchQuery = "".obs;
+
   @override
   void onInit() {
     super.onInit();
     _handleLocationAndService();
+
+    searchTextController.addListener(() {
+      searchQuery.value = searchTextController.text;
+    });
+
+    _setupSearchDebounce();
+  }
+
+  void _setupSearchDebounce() {
+    debounce(searchQuery, (String value) {
+      if (value.length >= 2 || value.isEmpty) {
+        fetchZoneMapRealtime(keyword: value);
+      }
+    }, time: const Duration(milliseconds: 600));
   }
 
   void onMapCreated(GoogleMapController controller) {
     mapController = controller;
+    // Removed the delay-based update to avoid redundant calls
   }
 
   void toggleView() {
     isListView.toggle();
+    if (isListView.value) {
+      // Refresh data when switching to List View if needed
+      fetchZoneMapRealtime(keyword: searchQuery.value);
+    }
   }
 
   /// Check permission and handle location
@@ -76,8 +97,9 @@ class ZoneController extends GetxController {
     }
   }
 
-  Future<void> fetchZoneMapRealtime() async {
+  Future<void> fetchZoneMapRealtime({String keyword = ""}) async {
     isLoading.value = true;
+    markers.clear(); 
 
     final body = {
       "user_id": appStorage.loggedInUserId?.toString() ?? "0",
@@ -86,7 +108,8 @@ class ZoneController extends GetxController {
         "lat": appStorage.current_lat.value,
         "lng": appStorage.current_lng.value,
         "zoom": 12,
-        "range_km": 25
+        "range_km": 25,
+        "keyword": keyword,
       }
     };
 
@@ -98,7 +121,6 @@ class ZoneController extends GetxController {
         membershipCount.value = response.membershipCount;
         ownershipCount.value = response.ownershipCount;
         
-        // Flatten grouped zones for the list view
         List<model.ZoneData> flattened = [];
         response.groupedZones.forEach((key, value) {
           flattened.addAll(value);
@@ -106,11 +128,21 @@ class ZoneController extends GetxController {
         allZoneList.value = flattened;
 
         await updateMarkers();
+        
+        // Auto-move camera to the location if it's the first load or location updated
+        if (mapController != null && keyword.isEmpty) {
+          mapController!.animateCamera(
+            CameraUpdate.newLatLng(
+              LatLng(appStorage.current_lat.value, appStorage.current_lng.value),
+            ),
+          );
+        }
       }
     } catch (err) {
       debugPrint("Zone map fetch error: $err");
     } finally {
       isLoading.value = false;
+      update(); // Force a final UI update
     }
   }
 
@@ -119,6 +151,10 @@ class ZoneController extends GetxController {
 
     for (var cluster in clusterList) {
       bool isSelected = selectedMarkerId.value == cluster.groupId;
+      
+      // Use a unique ID for the marker to help Google Maps identify updates
+      final markerId = MarkerId(cluster.groupId);
+      
       final icon = await _createZoneMarkerIcon(
         cluster.count.toString(),
         isSelected ? AppColors.green : AppColors.primaryColor,
@@ -126,11 +162,18 @@ class ZoneController extends GetxController {
 
       newMarkers.add(
         Marker(
-          markerId: MarkerId(cluster.groupId),
+          markerId: markerId,
           position: LatLng(cluster.lat, cluster.lng),
           icon: icon,
           onTap: () {
+            // If already selected, just show bottom sheet
+            if (selectedMarkerId.value == cluster.groupId) {
+              _showZoneDetailsBottomSheet(cluster.groupId);
+              return;
+            }
+            
             selectedMarkerId.value = cluster.groupId;
+            // Update markers to reflect selection state
             updateMarkers();
             _showZoneDetailsBottomSheet(cluster.groupId);
           },
@@ -138,6 +181,7 @@ class ZoneController extends GetxController {
       );
     }
     markers.assignAll(newMarkers);
+    update();
   }
 
   Future<BitmapDescriptor> _createZoneMarkerIcon(String count, Color color) async {
@@ -145,8 +189,8 @@ class ZoneController extends GetxController {
     final Canvas canvas = Canvas(pictureRecorder);
     const double size = 150.0;
     
-    final Paint ringPaint1 = Paint()..color = color.withOpacity(0.2);
-    final Paint ringPaint2 = Paint()..color = color.withOpacity(0.4);
+    final Paint ringPaint1 = Paint()..color = color.withValues(alpha: 0.2);
+    final Paint ringPaint2 = Paint()..color = color.withValues(alpha: 0.4);
     final Paint solidPaint = Paint()..color = color;
 
     canvas.drawCircle(const Offset(size / 2, size / 2), size / 2, ringPaint1);
@@ -185,5 +229,11 @@ class ZoneController extends GetxController {
         backgroundColor: Colors.transparent,
       );
     }
+  }
+
+  @override
+  void onClose() {
+    searchTextController.dispose();
+    super.onClose();
   }
 }

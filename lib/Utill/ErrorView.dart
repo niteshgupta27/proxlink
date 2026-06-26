@@ -1,13 +1,11 @@
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-import 'app_required.dart';
 
 class ErrorView extends StatelessWidget {
   final String message;
 
-  const ErrorView({Key? key, required this.message}) : super(key: key);
+  const ErrorView({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {

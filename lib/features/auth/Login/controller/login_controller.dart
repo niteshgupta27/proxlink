@@ -1,14 +1,10 @@
 import 'dart:io';
 
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:proxlink/Utill/app_required.dart';
 import 'package:proxlink/features/auth/services/auth_services.dart';
 
 import '../../../../Utill/AppConstants.dart';
@@ -108,8 +104,11 @@ String providername="";
         }
         return userCredential;
       } else {
-
-        final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+        // Updated to use the correct serverClientId from lalaat-app (1024229442086)
+        final GoogleSignIn googleSignIn = GoogleSignIn(
+          serverClientId: "1024229442086-eel0b455sehhi5s2krtq4lg7rm1olets.apps.googleusercontent.com",
+        );
+        final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
         print(googleUser);
         if (googleUser == null) {
           // User canceled the sign-in

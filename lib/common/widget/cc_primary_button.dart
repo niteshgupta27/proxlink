@@ -22,7 +22,7 @@ class CcPrimaryButton extends StatelessWidget {
   final bool isLoading;
 
   const CcPrimaryButton({
-    Key? key, required this.buttonText,
+    super.key, required this.buttonText,
     required this.onPressed,
     this.margin = 0,
     this.textColor,
@@ -35,24 +35,24 @@ class CcPrimaryButton extends StatelessWidget {
     this.textStyle,
     this.isLoading = false,
     this.borderColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.all(margin),
       child: SizedBox(
-        height: height != null ? height : 40,
+        height: height ?? 40,
         width: kIsWeb ? 350 :Dimensions.webScreenWidth,
         child: Material(
           elevation: elevation!,
           borderRadius: BorderRadius.circular(borderRadius),
           color: backgroundColor ?? Theme.of(context).primaryColor,
           child: TextButton(
-            onPressed: isLoading ? null : onPressed as void Function()?,
+            onPressed: isLoading ? null : onPressed,
             style: TextButton.styleFrom(
               padding: EdgeInsets.zero,
-              backgroundColor: backgroundColor ?? (onPressed == null ? Theme.of(context).hintColor.withOpacity(0.6) : Theme.of(context).primaryColor),
+              backgroundColor: backgroundColor ?? (onPressed == null ? Theme.of(context).hintColor.withValues(alpha: 0.6) : Theme.of(context).primaryColor),
               minimumSize: Size(kIsWeb ? 150 :Dimensions.webScreenWidth,  height ?? 40),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(borderRadius)),
               side: borderColor != null ? BorderSide(color: borderColor!, width: 1) : null,

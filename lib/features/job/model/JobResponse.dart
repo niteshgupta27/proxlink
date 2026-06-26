@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 class JobResponse {
   final String status;
@@ -56,39 +55,44 @@ class JobDetail {
   final String title;
   final String companyName;
   final String skillsHash;
-  final double salaryMin;
-  final double salaryMax;
+  final String job_type;
+  final String experience_text;
+  final String education;
+
   final String salaryCurrency;
   final double lat;
   final double lng;
-  final DateTime? createdAt;
+ // final DateTime? createdAt;
 final int posted_by_user_id;
   JobDetail({
     required this.jobId,
     required this.title,
     required this.companyName,
     required this.skillsHash,
-    required this.salaryMin,
-    required this.salaryMax,
+    required this.job_type,
+    required this.experience_text,required this.education,
     required this.salaryCurrency,
     required this.lat,
     required this.lng,
-    required this.createdAt,required this.posted_by_user_id
+   // required this.createdAt,
+    required this.posted_by_user_id
   });
 
   factory JobDetail.fromJson(Map<String, dynamic> json) {
+    print("job detail$json");
     return JobDetail(
       jobId: int.tryParse(json['job_id']?.toString() ?? '') ?? 0,
       title: json['title']?.toString() ?? '',
       companyName: json['company_name']?.toString() ?? '',
-      skillsHash: json['skills_hash']?.toString() ?? '',
-      salaryMin: double.tryParse(json['salary_min']?.toString() ?? '') ?? 0.0,
-      salaryMax: double.tryParse(json['salary_max']?.toString() ?? '') ?? 0.0,
-      salaryCurrency: json['salary_currency']?.toString() ?? 'INR',
+      skillsHash: json['skills_text']?.toString() ?? '',
+        job_type: json['job_type']?.toString() ?? '',
+        experience_text: json['experience_text']?.toString() ?? '',
+        education: json['education']?.toString() ?? '',
+      salaryCurrency: json['salary_text']?.toString() ?? 'INR',
       lat: double.tryParse(json['lat']?.toString() ?? '') ?? 0.0,
       lng: double.tryParse(json['lng']?.toString() ?? '') ?? 0.0,
-      createdAt: json['created_at'] != null ? DateTime.tryParse(json['created_at'].toString()) : null,
-      posted_by_user_id: json['posted_by_user_id']
+      //createdAt: json['created_at'] != null ? DateTime.tryParse(json['created_at'].toString()) : null,
+      posted_by_user_id: json['posted_by_user_id']??0
     );
   }
 }

@@ -11,13 +11,13 @@ class CachedProxiedImage extends StatelessWidget {
   final String proxyUrl;
 
   const CachedProxiedImage({
-    Key? key,
+    super.key,
     required this.imageUrl,
     this.width,
     this.height,
     this.fit = BoxFit.contain,
     this.proxyUrl = 'https://thingproxy.freeboard.io/fetch/',
-  }) : super(key: key);
+  });
 
   String getProxiedUrl(String imageUrl) {
     return '$proxyUrl$imageUrl';

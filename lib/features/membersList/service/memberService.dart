@@ -1,6 +1,5 @@
 import '../../../Utill/AppConstants.dart';
 import '../../../Utill/app_base_client.dart';
-import '../../discovery/model/discovery_Model.dart';
 import '../model/memberModel.dart';
 
 class Memberserviceservice {

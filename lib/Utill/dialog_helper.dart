@@ -3,9 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'dart:math' as math;
 
-import 'package:get/get_core/src/get_main.dart';
 
 import '../utill/app_colors.dart';
 import 'Dimensions.dart';
@@ -17,7 +15,7 @@ void showDialogHelper(BuildContext context, Widget dialog, {bool isFlip = false,
     context: context,
     barrierDismissible: dismissible,
     barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-    barrierColor: Colors.black.withOpacity(0.5),
+    barrierColor: Colors.black.withValues(alpha: 0.5),
     pageBuilder: (context, animation1, animation2) => dialog,
     transitionDuration: const Duration(milliseconds: 700),
     transitionBuilder: (context, animation, secondaryAnimation, widget) {
@@ -62,11 +60,11 @@ void showDialogHelper(BuildContext context, Widget dialog, {bool isFlip = false,
 
 class Rotation3DTransition extends AnimatedWidget {
   const Rotation3DTransition({
-    Key? key,
+    super.key,
     required Animation<double> turns,
     this.alignment = Alignment.center,
     this.child,
-  })  : super(key: key, listenable: turns);
+  })  : super(listenable: turns);
 
   Animation<double> get turns => listenable as Animation<double>;
 
@@ -124,7 +122,7 @@ print("dwdfdfefrefre");
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withValues(alpha: 0.2),
                   blurRadius: 10,
                   offset: const Offset(0, -2),
                 ),

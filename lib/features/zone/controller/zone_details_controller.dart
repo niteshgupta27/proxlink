@@ -98,10 +98,12 @@ class ZoneDetailsController extends GetxController {
       final response = isCurrentlyMember 
           ? await zoneService.leaveZone(body: body)
           : await zoneService.joinZone(body: body);
-
+print(response);
       if (response != null && response['status'] == 'success') {
         Get.snackbar("Success", response['message'] ?? "Action successful");
-        fetchZoneDetails(detailResponse.value!.zone!.zoneId.toString());
+        
+        // Go back to the previous screen with a success result
+        Get.back(result: true);
       } else {
         Get.snackbar("Error", response?['message'] ?? "Something went wrong");
       }

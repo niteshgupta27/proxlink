@@ -59,23 +59,26 @@ class PostJobController extends GetxController {
       "api_key": appStorage.loggedInUserToken,
       "user_id": appStorage.loggedInUserId?.toString() ?? "0",
       "payload": {
-        "address": officeLocationController.value.text,
-        "city": "", // Can be extracted if needed
         "company_name": companyNameController.text,
-        "description": "", // Add a controller if description is needed
-        "experience_max": "", 
-        "experience_min": experienceController.text,
+        "address": officeLocationController.value.text,
+        "title": jobTitleController.text,
+        "experience": experienceController.text,
         "job_type": selectedJobType.value,
         "work_location": selectedWorkLocation.value,
-        "lat": selectedLat.value.toString(),
-        "lng": selectedLng.value.toString(),
-        "profession": "", 
-        "salary_currency": "INR",
-        "salary_max": "",
+        "education": educationController.text, // Can be extracted if needed
         "salary_min": salaryController.text,
         "skills": skills.join(","),
-        "state": "",
-        "title": jobTitleController.text
+       // "description": "", // Add a controller if description is needed
+        //"experience_max": "",
+
+        "lat": selectedLat.value.toString(),
+        "lng": selectedLng.value.toString(),
+        // "profession": "",
+        // "salary_currency": "INR",
+        // "salary_max": "",
+        //
+        // "state": "",
+
       }
     };
 

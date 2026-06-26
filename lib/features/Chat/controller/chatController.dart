@@ -30,7 +30,7 @@ class ChatController extends GetxController {
         apiKey: appStorage.loggedInUserToken,
       );
 
-      if (response != null && response.status == 'success') {
+      if (response.status == 'success') {
         chatList.value = response.chats ?? [];
       }
     } catch (e) {

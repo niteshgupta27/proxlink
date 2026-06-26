@@ -4,7 +4,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart' hide Cluster;
 import 'package:proxlink/Utill/AppConstants.dart';
 import 'package:proxlink/Utill/Dimensions.dart';
 import 'package:proxlink/Utill/app_colors.dart';
-import 'package:proxlink/common/widget/custom_popup_menu_item.dart';
 import 'package:proxlink/features/zone/model/zone_model.dart';
 import '../../../routes/app_pages.dart';
 import '../controller/zone_controller.dart';
@@ -59,13 +58,22 @@ class ZoneView extends GetView<ZoneController> {
               ),
             ),
           ),
-          const CustomPopupMenu(),
+          // const CustomPopupMenu(),
         ],
       ),
       body: Stack(
         children: [
           // Content (Map or List)
           Obx(() => controller.isListView.value ? _buildListView() : _buildMapView()),
+
+          // Loading Overlay
+          Obx(() => controller.isLoading.value 
+            ? Container(
+                color: Colors.black.withValues(alpha: 0.1),
+                child: const Center(child: CircularProgressIndicator()),
+              )
+            : const SizedBox.shrink()
+          ),
 
           // Search & Filters Layer
           Column(
@@ -112,20 +120,21 @@ class ZoneView extends GetView<ZoneController> {
                           borderRadius: BorderRadius.circular(Dimensions.radiusSizeTen),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.black.withValues(alpha: 0.1),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             )
                           ],
                         ),
-                        child: const Row(
+                        child:  Row(
                           children: [
                             Icon(Icons.search, color: AppColors.black),
                             SizedBox(width: 10),
                             Expanded(
                               child: TextField(
-                                decoration: InputDecoration(
-                                  hintText: "Search Jobs",
+                                controller: controller.searchTextController,
+                                decoration: const InputDecoration(
+                                  hintText: "Search zone by keywords",
                                   border: InputBorder.none,
                                   hintStyle: TextStyle(
                                     color: Colors.grey,
@@ -153,7 +162,7 @@ class ZoneView extends GetView<ZoneController> {
                           borderRadius: BorderRadius.circular(Dimensions.radiusSizeTen),
                           boxShadow: [
                             BoxShadow(
-                              color: AppColors.primaryColor.withOpacity(0.3),
+                              color: AppColors.primaryColor.withValues(alpha: 0.3),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             )
@@ -200,7 +209,7 @@ class ZoneView extends GetView<ZoneController> {
             ),
             zoom: 14,
           ),
-          markers: controller.markers,
+          markers: Set<Marker>.from(controller.markers),
           myLocationButtonEnabled: false,
           zoomControlsEnabled: false,
           onMapCreated: controller.onMapCreated,
@@ -232,7 +241,12 @@ class ZoneView extends GetView<ZoneController> {
 
   Widget _buildZoneListItem(ZoneData zone) {
     return GestureDetector(
-      onTap: () => Get.toNamed(Routes.ZoneDetails, arguments: zone),
+      onTap: () async {
+        var result = await Get.toNamed(Routes.ZoneDetails, arguments: zone);
+        if (result == true) {
+          controller.fetchZoneMapRealtime();
+        }
+      },
       child: Container(
         margin: const EdgeInsets.only(bottom: 20),
         decoration: BoxDecoration(
@@ -240,7 +254,7 @@ class ZoneView extends GetView<ZoneController> {
           borderRadius: BorderRadius.circular(15),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 10,
               offset: const Offset(0, 4),
             )
@@ -295,30 +309,36 @@ class ZoneView extends GetView<ZoneController> {
                 ],
               ),
             ),
-            GestureDetector(
-              onTap: () => Get.toNamed(Routes.ZoneDetails, arguments: zone),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(15),
-                    bottomRight: Radius.circular(15),
+            if (!zone.isMember)
+              GestureDetector(
+                onTap: () async {
+                  var result = await Get.toNamed(Routes.ZoneDetails, arguments: zone);
+                  if (result == true) {
+                    controller.fetchZoneMapRealtime();
+                  }
+                },
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(15),
+                      bottomRight: Radius.circular(15),
+                    ),
                   ),
-                ),
-                alignment: Alignment.center,
-                child: const Text(
-                  "Join Zone",
-                  style: TextStyle(
-                    color: AppColors.primaryColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    fontFamily: AppConstants.fontFamily_Acre,
+                  alignment: Alignment.center,
+                  child: const Text(
+                    "Join Zone",
+                    style: TextStyle(
+                      color: AppColors.primaryColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      fontFamily: AppConstants.fontFamily_Acre,
+                    ),
                   ),
                 ),
               ),
-            ),
           ],
         ),
       ),
@@ -329,9 +349,9 @@ class ZoneView extends GetView<ZoneController> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2),
+        color: Colors.white.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withOpacity(0.3)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
       ),
       child: Text(
         label,
@@ -424,9 +444,14 @@ class ZoneDetailsBottomSheet extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: InkWell(
-        onTap: () {
+        onTap: () async {
           Get.back();
-          Get.toNamed(Routes.ZoneDetails, arguments: zone);
+          var result = await Get.toNamed(Routes.ZoneDetails, arguments: zone);
+          if (result == true) {
+            if (Get.isRegistered<ZoneController>()) {
+              Get.find<ZoneController>().fetchZoneMapRealtime();
+            }
+          }
         },
         child: Stack(
           children: [
@@ -456,28 +481,29 @@ class ZoneDetailsBottomSheet extends StatelessWidget {
                 ],
               ),
             ),
-            Positioned(
-              bottom: 0,
-              right: 0,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: const BoxDecoration(
-                  color: Color(0xFF1A73E8),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    bottomRight: Radius.circular(20),
+            if (!zone.isMember)
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF1A73E8),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      bottomRight: Radius.circular(20),
+                    ),
+                  ),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.login, color: Colors.white, size: 18),
+                      SizedBox(width: 8),
+                      Text("Join",
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                    ],
                   ),
                 ),
-                child: const Row(
-                  children: [
-                    Icon(Icons.login, color: Colors.white, size: 18),
-                    SizedBox(width: 8),
-                    Text("Join",
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                  ],
-                ),
               ),
-            ),
           ],
         ),
       ),

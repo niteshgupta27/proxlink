@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import 'package:proxlink/Utill/app_storage.dart';
-import 'package:proxlink/features/zone/model/zone_model.dart';
 import 'package:proxlink/features/zone/service/zone_service.dart';
 
 import '../model/MyZoneListResponse.dart';

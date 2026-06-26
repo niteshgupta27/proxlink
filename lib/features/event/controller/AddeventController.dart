@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../Utill/app_storage.dart';
 import '../../membersList/model/NetworkModel.dart';
-import '../../network/view/ShareQRView.dart';
 import '../eventservice.dart';
 
 class AddeventController extends GetxController {

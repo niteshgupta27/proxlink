@@ -1,8 +1,5 @@
 import 'dart:io';
-import 'dart:typed_data';
-import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
@@ -12,7 +9,6 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../Utill/AppConstants.dart';
 import '../../../Utill/app_colors.dart';
-import '../../../Utill/Images.dart';
 import '../../../routes/app_pages.dart';
 import '../controller/ShearQRController.dart';
 
@@ -37,14 +33,8 @@ class ShareQRView extends GetView<ShearQRController>  {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            SvgPicture.asset(
-              Images.logo,
-              width: 41,
-              height: 41,
-            ),
-            const SizedBox(width: 8),
             const Text(
-              'ProxiLink',
+              'nrby',
               style: TextStyle(
                 fontFamily: AppConstants.fontFamily_ADLaM_Display,
                 fontSize: 23,
@@ -85,11 +75,6 @@ class ShareQRView extends GetView<ShearQRController>  {
                 data: controller.networkId.value,
                 version: QrVersions.auto,
                 size: 250.0,
-                // QrImageView uses ImageProvider for embeddedImage
-                embeddedImage: const AssetImage(Images.logo),
-                embeddedImageStyle: const QrEmbeddedImageStyle(
-                  size: Size(40, 40),
-                ),
               ),
             ),
             const SizedBox(height: 30),
@@ -128,7 +113,7 @@ class ShareQRView extends GetView<ShearQRController>  {
             width: 70,
             height: 70,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.1),
               shape: BoxShape.circle,
               border: Border.all(color: Colors.white24),
             ),

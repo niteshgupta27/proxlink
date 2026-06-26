@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:proxlink/Utill/app_colors.dart';
-import 'package:proxlink/common/widget/custom_popup_menu_item.dart';
 import '../../../Utill/AppConstants.dart';
 import '../../../Utill/Dimensions.dart';
-import '../../../Utill/Images.dart';
 import '../../../routes/app_pages.dart';
 import '../../Chat/controller/chatController.dart';
 import '../controller/jobController.dart';
@@ -47,7 +44,7 @@ class JobView extends GetView<JobController> {
                 borderRadius: BorderRadius.circular(Dimensions.radiusSizeTen),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primaryColor.withOpacity(0.3),
+                    color: AppColors.primaryColor.withValues(alpha: 0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -86,7 +83,7 @@ class JobView extends GetView<JobController> {
                     ),
                     zoom: 14,
                   ),
-                  markers: controller.markers,
+                  markers: controller.markers.toSet(),
                   myLocationButtonEnabled: false,
                   zoomControlsEnabled: false,
                   onMapCreated: (GoogleMapController mapController) {
@@ -112,7 +109,7 @@ class JobView extends GetView<JobController> {
                           borderRadius: BorderRadius.circular(Dimensions.radiusSizeTen),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.black.withValues(alpha: 0.1),
                               blurRadius: 8,
                               offset: const Offset(0, 4),
                             ),
@@ -165,7 +162,7 @@ class JobView extends GetView<JobController> {
                           borderRadius: BorderRadius.circular(Dimensions.radiusSizeTen),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.black.withValues(alpha: 0.1),
                               blurRadius: 8,
                               offset: const Offset(0, 4),
                             ),
@@ -187,7 +184,7 @@ class JobView extends GetView<JobController> {
                           borderRadius: BorderRadius.circular(Dimensions.radiusSizeTen),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.black.withValues(alpha: 0.1),
                               blurRadius: 8,
                               offset: const Offset(0, 4),
                             ),
@@ -220,7 +217,7 @@ class JobView extends GetView<JobController> {
               ],
             ),
           ),
-          const CustomPopupMenu(),
+          // const CustomPopupMenu(),
         ],
       ),
     );
@@ -288,14 +285,8 @@ class JobDetailsBottomSheet extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(job.title,
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                    _buildRichText("Skill Set : ", job.skillsHash),
-                  ],
-                ),
+                Text(job.title,
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                 Text(job.companyName, style: const TextStyle(color: Colors.blue)),
                 const SizedBox(height: 8),
                 Row(
@@ -305,19 +296,26 @@ class JobDetailsBottomSheet extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildDetailRow("Type", "Full Time"),
-                          _buildDetailRow("Education", "MBA"),
-                          _buildDetailRow("Experience", "5+ Years"),
+                          _buildDetailRow("Type", job.job_type),
+                          _buildDetailRow("Education", job.education),
+                          _buildDetailRow("Experience", job.experience_text),
                         ],
                       ),
                     ),
                     Expanded(
                       child: _buildDetailRow(
-                          "Salary", "${job.salaryCurrency} ${job.salaryMin} - ${job.salaryMax}"),
+                          "Salary", job.salaryCurrency),
                     ),
                   ],
                 ),
-                const SizedBox(height: 10), // Space for the floating button
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    _buildRichText("Skill Set : ", job.skillsHash),
+                  ],
+                ),
+                const SizedBox(height: 20), // Space for the floating button
               ],
             ),
           ),

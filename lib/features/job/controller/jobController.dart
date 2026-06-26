@@ -9,7 +9,6 @@ import 'package:proxlink/Utill/app_colors.dart';
 import 'package:proxlink/Utill/app_storage.dart';
 import 'package:proxlink/features/job/services/jobService.dart';
 import '../model/JobResponse.dart';
-import '../../../Utill/Apputills.dart';
 import '../view/jobView.dart';
 
 class JobController extends GetxController {
@@ -58,7 +57,7 @@ class JobController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _handleLocation();
+    _handleLocationAndService();
     
     searchTextController.addListener(() {
       searchQuery.value = searchTextController.text;
@@ -70,6 +69,7 @@ class JobController extends GetxController {
     everAll([appStorage.current_lat, appStorage.current_lng], (_) {
       _moveCameraToCurrentLocation();
     });
+    // fetchJobs(keywords:searchTextController.text);
   }
 
   void onMapCreated(GoogleMapController controller) {
@@ -85,43 +85,37 @@ class JobController extends GetxController {
     }
   }
 
-  Future<void> _handleLocation() async {
+  /// Check permission and handle location
+  Future<void> _handleLocationAndService() async {
     bool serviceEnabled;
     LocationPermission permission;
 
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      isLoading.value = false;
-      return;
-    }
+    if (!serviceEnabled) return;
 
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        isLoading.value = false;
-        return;
-      }
+      if (permission == LocationPermission.denied) return;
     }
 
-    if (permission == LocationPermission.deniedForever) {
-      isLoading.value = false;
-      return;
-    }
+    if (permission == LocationPermission.deniedForever) return;
 
     try {
       Position position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
+        desiredAccuracy: LocationAccuracy.high,
       );
-      appStorage.current_lng.value = position.longitude;
+
       appStorage.current_lat.value = position.latitude;
-      fetchJobs();
+      appStorage.current_lng.value = position.longitude;
+
+      fetchJobs(keywords: searchTextController.text);
     } catch (e) {
-      debugPrint("Error getting initial location: $e");
-    } finally {
-      isLoading.value = false;
+      debugPrint("Error getting location: $e");
+      fetchJobs(keywords: searchTextController.text); // Fetch anyway if we have stored location or default
     }
   }
+
 
   void selectSuggestion(String suggestion) {
     _isSelection = true;
@@ -184,7 +178,6 @@ class JobController extends GetxController {
         "salary_max": salaryMax
       }
     };
-print(body);
     try {
       final response = await jobService.getJobsMap(body: body);
       await _handleJobResponse(response);
@@ -195,11 +188,12 @@ print(body);
   }
 
   Future<void> _handleJobResponse(JobResponse response) async {
-    markers.clear();
     if (response.status == "success") {
       clusterList.value = response.clusters;
       groupedDetails.value = response.groupedDetails;
       await updateMarkers();
+    } else {
+      markers.clear();
     }
     isLoading.value = false;
   }

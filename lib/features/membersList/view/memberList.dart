@@ -8,7 +8,6 @@ import '../../../Utill/app_colors.dart';
 import '../../discovery/model/discovery_Model.dart';
 import '../../Chat/controller/chatController.dart';
 import '../controller/memberListController.dart';
-import '../model/NetworkModel.dart';
 
 class MemberListview extends GetView<MemberListController> {
   const MemberListview({super.key});
@@ -69,7 +68,7 @@ class MemberListview extends GetView<MemberListController> {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   itemCount: controller.networks.length,
                   itemBuilder: (context, index) {
-                    return _contactCard(controller.networks[index]);;
+                    return _contactCard(controller.networks[index]);
                   },
                 )),
           ),
@@ -100,7 +99,7 @@ class MemberListview extends GetView<MemberListController> {
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: AppColors.primaryColor.withOpacity(0.3),
+                color: AppColors.primaryColor.withValues(alpha: 0.3),
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.circular(5.0),
               ),

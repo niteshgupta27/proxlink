@@ -1,6 +1,7 @@
 class AppConstants {
   static const String appName = 'nrby';
   static const double appVersion = 7.4;
+  static const String termsUrl = 'https://lalaat.com/terms-and-conditions.html';
   static const String fontFamily_ADLaM_Display = 'ADLaM Display';
   static const String fontFamily_Acre = 'Acre';
 
@@ -12,7 +13,7 @@ class AppConstants {
   // static const String baseUrl = 'https://proxlink.encodeit.in/api/';
   // static const String ImaepathHost='https://proxlink.encodeit.in/';
   static const String configUri = '/api/v1/config';
-  static const String payment_link=ImaepathHost+'payment/gateway';
+  static const String payment_link='${ImaepathHost}payment/gateway';
 
   static const loginUserInformation = 'loginUserInformation_storage';
   static const loginUserInformationToken = 'loginUserInformation_token';
@@ -32,8 +33,8 @@ class AppConstants {
   static const  PlanecartList = 'planecart_list';
 
 
-  static var phonenoExp = '^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}';
-  static var emailExp = "^[a-zA-Z0-9.a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\$";
+  static var phonenoExp = '^[+]?[(]?[0-9]{3}[)]?[-s.]?[0-9]{3}[-s.]?[0-9]{4,6}';
+  static var emailExp = "^[a-zA-Z0-9.a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}\$";
 
 //Api END POINTS
   static var login='auth';

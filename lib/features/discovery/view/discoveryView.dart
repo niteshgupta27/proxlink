@@ -3,7 +3,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:proxlink/Utill/app_colors.dart';
-import 'package:proxlink/common/widget/custom_popup_menu_item.dart';
 import '../../../Utill/AppConstants.dart';
 import '../../../Utill/Images.dart';
 import '../../../common/widget/custom_loader_widget.dart';
@@ -12,7 +11,7 @@ import '../controller/discoveryController.dart';
 import '../model/discovery_Model.dart';
 
 class DiscoveryView extends GetView<DiscoveryController> {
-  DiscoveryView({super.key});
+  const DiscoveryView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +32,7 @@ class DiscoveryView extends GetView<DiscoveryController> {
           ),
         ),
         actions: [
-          CustomPopupMenu(),
+          // CustomPopupMenu(),
         ],
       ),
       body: Stack(
@@ -188,7 +187,7 @@ class ContactBottomSheet extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: AppColors.primaryColor.withOpacity(0.3),
+                color: AppColors.primaryColor.withValues(alpha: 0.3),
                 shape: BoxShape.rectangle,
                   borderRadius: BorderRadius.circular(5.0)
               ),

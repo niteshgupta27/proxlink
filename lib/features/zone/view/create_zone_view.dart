@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:proxlink/Utill/AppConstants.dart';
-import 'package:proxlink/Utill/Dimensions.dart';
 import 'package:proxlink/Utill/app_colors.dart';
 import '../controller/create_zone_controller.dart';
 import 'location_picker_view.dart';
@@ -55,7 +54,7 @@ class CreateZoneView extends GetView<CreateZoneController> {
                     TextSpan(
                       text: "Zone Owned by you: ",
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withValues(alpha: 0.8),
                         fontSize: 14,
                         fontFamily: AppConstants.fontFamily_Acre,
                       ),
@@ -134,7 +133,7 @@ class CreateZoneView extends GetView<CreateZoneController> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 15,
             offset: const Offset(0, 4),
           ),
@@ -161,7 +160,7 @@ class CreateZoneView extends GetView<CreateZoneController> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 15,
             offset: const Offset(0, 4),
           ),
@@ -191,7 +190,7 @@ class CreateZoneView extends GetView<CreateZoneController> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 15,
             offset: const Offset(0, 4),
           ),
@@ -203,11 +202,16 @@ class CreateZoneView extends GetView<CreateZoneController> {
           TextField(
             controller: controller.skillController,
             onSubmitted: (val) => controller.addSkill(val),
+            style: const TextStyle(fontFamily: AppConstants.fontFamily_Acre),
             decoration: InputDecoration(
               hintText: "Type here",
               hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 16),
               contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
               border: InputBorder.none,
+              suffixIcon: IconButton(
+                icon: const Icon(Icons.add_circle, color: AppColors.primaryColor, size: 28),
+                onPressed: () => controller.addSkill(controller.skillController.text),
+              ),
             ),
           ),
           Divider(color: Colors.grey.shade200, height: 1),
@@ -282,7 +286,7 @@ class CreateZoneView extends GetView<CreateZoneController> {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.06),
+              color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 15,
               offset: const Offset(0, 4),
             ),

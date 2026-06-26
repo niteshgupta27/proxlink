@@ -1,24 +1,16 @@
-import 'dart:io';
 import 'dart:ui';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:proxlink/Utill/AppConstants.dart';
-import 'package:proxlink/Utill/app_required.dart';
 import 'package:proxlink/features/auth/Login/controller/login_controller.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../Utill/Dimensions.dart';
 import '../../../../Utill/Images.dart';
-import '../../../../Utill/ResponsiveView.dart';
 import '../../../../Utill/app_colors.dart';
-import '../../../../Utill/styles.dart';
-import '../../../../common/widget/custom_loader_widget.dart';
-import '../../../../routes/app_pages.dart';
 
 
 class LoginView extends StatefulWidget {
@@ -60,7 +52,7 @@ class _LoginViewState extends State<LoginView> {
                   width: 736,
                   height: 736,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF5E7EFF).withOpacity(0.5),
+                    color: const Color(0xFF5E7EFF).withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(368),
                   ),
                   child: BackdropFilter(
@@ -105,14 +97,8 @@ class _LoginViewState extends State<LoginView> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      SvgPicture.asset(
-                        Images.logo,
-                        width: 50,
-                        height: 50,
-                      ),
-                      const SizedBox(width: 8),
                       const Text(
-                        'ProxiLink',
+                        'nrby',
                         style: TextStyle(
                           fontFamily: AppConstants.fontFamily_ADLaM_Display,
                           fontSize: 36,
@@ -128,7 +114,7 @@ class _LoginViewState extends State<LoginView> {
 
                   // Welcome text
                   const Text(
-                    'Welcome to ProxiLink',
+                    'Welcome to nrby',
                     style: TextStyle(
                       fontFamily: AppConstants.fontFamily_Acre,
                       fontSize: 22,
@@ -170,7 +156,7 @@ class _LoginViewState extends State<LoginView> {
                     ),
                   ),
 
-                  const SizedBox(height: Dimensions.x16),
+                  /*const SizedBox(height: Dimensions.x16),
 
                   // Facebook Login Button
                   Padding(
@@ -185,7 +171,7 @@ class _LoginViewState extends State<LoginView> {
                         controller.signInWithFacebook();
                       },
                     ),
-                  ),
+                  ),*/
 
                   const Spacer(flex: 1),
 
@@ -194,18 +180,25 @@ class _LoginViewState extends State<LoginView> {
                     padding: const EdgeInsets.symmetric(horizontal: 42),
                     child: RichText(
                       textAlign: TextAlign.center,
-                      text: const TextSpan(
-                        style: TextStyle(
+                      text: TextSpan(
+                        style: const TextStyle(
                           fontFamily: AppConstants.fontFamily_Acre,
                           fontSize: 19,
                           color: AppColors.whites,
                           height: 1.6,
                         ),
                         children: [
-                          TextSpan(text: 'By Continuing you are agree to \n'),
+                          const TextSpan(text: 'By Continuing you are agree to \n'),
                           TextSpan(
                             text: 'Terms & Privacy Policy',
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () async {
+                                final Uri url = Uri.parse(AppConstants.termsUrl);
+                                if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+                                  throw Exception('Could not launch $url');
+                                }
+                              },
                           ),
                         ],
                       ),
@@ -250,7 +243,7 @@ class SocialLoginButton extends StatelessWidget {
           backgroundColor: backgroundColor,
           foregroundColor: textColor,
           elevation: borderColor == null ? 2 : 0,
-          shadowColor: Colors.black.withOpacity(0.1),
+          shadowColor: Colors.black.withValues(alpha: 0.1),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
             side: borderColor != null

@@ -1,19 +1,12 @@
-import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_state_manager/src/simple/get_view.dart';
 import 'package:proxlink/Utill/AppConstants.dart';
-import 'package:proxlink/Utill/Apputills.dart';
 import '../../../Utill/Dimensions.dart';
 import '../../../Utill/Images.dart';
 import '../../../Utill/app_colors.dart';
-import '../../../Utill/app_required.dart';
 import '../../../Utill/app_storage.dart';
-import '../../../main.dart';
 import '../controllers/bottom_navigation_controller.dart';
 
 class BottomNavigationView extends GetView<BottomNavigationController> {
@@ -39,7 +32,7 @@ class BottomNavigationView extends GetView<BottomNavigationController> {
             decoration: BoxDecoration(color: AppColors.primaryColor,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1), // Shadow color
+                  color: Colors.black.withValues(alpha: 0.1), // Shadow color
                   offset: Offset(0, -3), // Offset to show shadow at the top
                   blurRadius: 6, // Blur for the shadow
                 ),
@@ -125,7 +118,7 @@ class BottomNavigationView extends GetView<BottomNavigationController> {
             width: 45,
             height: 45,
             decoration: BoxDecoration(
-              color: isActive ? AppColors.whites : AppColors.whites.withOpacity(0.1),
+              color: isActive ? AppColors.whites : AppColors.whites.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(22.5),
             ),child:Padding(padding: EdgeInsets.all(10),child: SvgPicture.asset(
             iconPath,

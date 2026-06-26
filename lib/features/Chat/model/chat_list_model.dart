@@ -17,8 +17,8 @@ class ChatListResponse {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['status'] = status;
-    if (this.chats != null) {
-      data['chats'] = this.chats!.map((v) => v.toJson()).toList();
+    if (chats != null) {
+      data['chats'] = chats!.map((v) => v.toJson()).toList();
     }
     return data;
   }

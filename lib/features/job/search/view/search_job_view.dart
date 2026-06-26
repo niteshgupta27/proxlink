@@ -38,32 +38,32 @@ class SearchJobView extends GetView<SearchJobController> {
             fontSize: 22,
           ),
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 15.0),
-            child: Center(
-              child: GestureDetector(
-                onTap: () {},
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Text(
-                    "Saved Searches",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: AppConstants.fontFamily_Acre,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
+        // actions: [
+        //   Padding(
+        //     padding: const EdgeInsets.only(right: 15.0),
+        //     child: Center(
+        //       child: GestureDetector(
+        //         onTap: () {},
+        //         child: Container(
+        //           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        //           decoration: BoxDecoration(
+        //             color: Colors.white,
+        //             borderRadius: BorderRadius.circular(10),
+        //           ),
+        //           child: const Text(
+        //             "Saved Searches",
+        //             style: TextStyle(
+        //               color: Colors.black,
+        //               fontWeight: FontWeight.bold,
+        //               fontFamily: AppConstants.fontFamily_Acre,
+        //               fontSize: 12,
+        //             ),
+        //           ),
+        //         ),
+        //       ),
+        //     ),
+        //   ),
+        // ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(Dimensions.paddingSizeLarge),
@@ -78,27 +78,27 @@ class SearchJobView extends GetView<SearchJobController> {
             _buildJobTitleInput(),
             const SizedBox(height: 25),
 
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(child: _buildExperienceDropdown()),
-                const SizedBox(width: 20),
-                Expanded(child: _buildEducationDropdown()),
-              ],
-            ),
-            const SizedBox(height: 25),
-
-            _buildSectionTitle("Salary Expectation"),
-            _buildSalarySlider(context),
-            const SizedBox(height: 25),
+            // Row(
+            //   crossAxisAlignment: CrossAxisAlignment.start,
+            //   children: [
+            //     Expanded(child: _buildExperienceDropdown()),
+            //     const SizedBox(width: 20),
+            //     Expanded(child: _buildEducationDropdown()),
+            //   ],
+            // ),
+            // const SizedBox(height: 25),
+            //
+            // _buildSectionTitle("Salary Expectation"),
+            // _buildSalarySlider(context),
+            // const SizedBox(height: 25),
 
             _buildSectionTitle("Skill sets"),
             _buildSkillSets(),
             const SizedBox(height: 25),
 
-            _buildSectionTitle("Work Location"),
-            _buildWorkLocationSelector(),
-            const SizedBox(height: 20),
+            // _buildSectionTitle("Work Location"),
+            // _buildWorkLocationSelector(),
+            // const SizedBox(height: 20),
           ],
         ),
       ),
@@ -188,7 +188,7 @@ class SearchJobView extends GetView<SearchJobController> {
             borderRadius: BorderRadius.circular(Dimensions.radiusSizeMedium),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.03),
+                color: Colors.black.withValues(alpha: 0.03),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -214,7 +214,7 @@ class SearchJobView extends GetView<SearchJobController> {
                   borderRadius: BorderRadius.circular(Dimensions.radiusSizeMedium),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -330,7 +330,7 @@ class SearchJobView extends GetView<SearchJobController> {
         SliderTheme(
           data: SliderTheme.of(context).copyWith(
             rangeThumbShape: const _CustomRangeThumbShape(),
-            overlayColor: AppColors.primaryColor.withOpacity(0.1),
+            overlayColor: AppColors.primaryColor.withValues(alpha: 0.1),
             activeTrackColor: AppColors.primaryColor,
             inactiveTrackColor: Colors.grey.shade200,
             trackHeight: 6.0,
@@ -347,7 +347,7 @@ class SearchJobView extends GetView<SearchJobController> {
         Row(
           children: [
             Expanded(
-              child: Container(
+              child: SizedBox(
                 height: 30,
                 child: LayoutBuilder(
                   builder: (context, constraints) {
@@ -386,16 +386,41 @@ class SearchJobView extends GetView<SearchJobController> {
   Widget _buildSkillSets() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(15),
+      constraints: const BoxConstraints(minHeight: 60),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: Colors.grey.shade200),
       ),
       child: Obx(() => Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
             spacing: 10.0,
             runSpacing: 10.0,
-            children: controller.skills.map((skill) => _buildSkillChip(skill)).toList(),
+            children: [
+              ...controller.skills.map((skill) => _buildSkillChip(skill)),
+              SizedBox(
+                width: 150,height: 40,
+                child: TextField(
+                  controller: controller.skillInputController,
+                  focusNode: controller.skillFocusNode,
+                  style: const TextStyle(
+                    fontFamily: AppConstants.fontFamily_Acre,
+                    fontSize: 14,
+                  ),
+                  decoration: const InputDecoration(
+                    hintText: "Add skill...",
+                    hintStyle: TextStyle(fontSize: 14, color: Colors.grey),
+                    border: InputBorder.none,
+                    isDense: true,
+                  ),
+                  onSubmitted: (value) {
+                    controller.addSkill(value);
+                    controller.skillFocusNode.requestFocus();
+                  },
+                ),
+              ),
+            ],
           )),
     );
   }

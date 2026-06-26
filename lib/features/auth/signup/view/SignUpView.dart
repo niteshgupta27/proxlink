@@ -1,23 +1,13 @@
-import 'dart:io';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:proxlink/Utill/Dimensions.dart';
 import 'package:proxlink/features/auth/signup/controller/SignUpController.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../Utill/AppConstants.dart';
-import '../../../../Utill/Images.dart';
-import '../../../../Utill/ResponsiveView.dart';
 import '../../../../Utill/app_colors.dart';
-import '../../../../Utill/app_required.dart';
-import '../../../../Utill/styles.dart';
-import '../../../../common/widget/custom_loader_widget.dart';
-import '../../../../routes/app_pages.dart';
 
 
 
@@ -31,14 +21,8 @@ class SignUpView extends GetView<SignUpController> {
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
-        SvgPicture.asset(
-          Images.logo,
-          width: 41,
-          height: 41,
-        ),
-        const SizedBox(width: 8),
         const Text(
-          'ProxiLink',
+          'nrby',
           style: TextStyle(
             fontFamily: AppConstants.fontFamily_ADLaM_Display,
             fontSize: 23,
@@ -159,7 +143,7 @@ class SignUpView extends GetView<SignUpController> {
                         ),
                       ),
                       child: const Text("Next", style:
-                      const TextStyle(fontSize:18, fontWeight: FontWeight.bold,fontFamily: AppConstants.fontFamily_Acre)),
+                      TextStyle(fontSize:18, fontWeight: FontWeight.bold,fontFamily: AppConstants.fontFamily_Acre)),
                     ),
                   ),
                 )
@@ -179,7 +163,7 @@ class SignUpView extends GetView<SignUpController> {
       color: const Color(0xFF0D6EFD),
       alignment: Alignment.center,
       child: const Text(
-        "✔ ProxiLink",
+        "✔ nrby",
         style: TextStyle(
             color: Colors.white,
             fontSize: 20,
@@ -300,17 +284,31 @@ class SignUpView extends GetView<SignUpController> {
         ),
         Expanded(
           child: RichText(
-            text: const TextSpan(
-              style: TextStyle(color: AppColors.black, fontSize: 14,fontFamily: AppConstants.fontFamily_Acre,fontWeight: FontWeight.normal),
+            text: TextSpan(
+              style: const TextStyle(color: AppColors.black, fontSize: 14,fontFamily: AppConstants.fontFamily_Acre,fontWeight: FontWeight.normal),
               children: [
-                TextSpan(text: "I agree to "),
+                const TextSpan(text: "I agree to "),
                 TextSpan(
                     text: "Terms & Conditions",
-                    style: TextStyle(color: AppColors.primaryColor)),
-                TextSpan(text: " and "),
+                    style: const TextStyle(color: AppColors.primaryColor),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () async {
+                        final Uri url = Uri.parse(AppConstants.termsUrl);
+                        if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+                          throw Exception('Could not launch $url');
+                        }
+                      }),
+                const TextSpan(text: " and "),
                 TextSpan(
                     text: "Privacy Policy",
-                    style: TextStyle(color: AppColors.primaryColor)),
+                    style: const TextStyle(color: AppColors.primaryColor),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () async {
+                        final Uri url = Uri.parse(AppConstants.termsUrl);
+                        if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+                          throw Exception('Could not launch $url');
+                        }
+                      }),
               ],
             ),
           ),
@@ -325,7 +323,7 @@ class SignUpView extends GetView<SignUpController> {
       borderRadius: BorderRadius.circular(14),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.05),
+          color: Colors.black.withValues(alpha: 0.05),
           blurRadius: 10,
         )
       ],

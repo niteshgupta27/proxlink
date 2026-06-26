@@ -58,13 +58,13 @@ class UserData {
   String? updatedAt;
 //String? token;
   UserData({
-     this.id,
+    this.id,
     this.name,
     this.email,
-     this.number,
-     this.otp,
+    this.number,
+    this.otp,
     this.image,
-     this.otpExpiredAt,
+    this.otpExpiredAt,
     this.emailVerifiedAt,
     // this.walletBalance,
     this.temporaryToken,
@@ -72,11 +72,11 @@ class UserData {
     this.referredBy,
     this.providerId,
     this.providerName,
-     this.isBlock,
-     this.registration,
-     this.numberVerify,
-     this.createdAt,
-     this.updatedAt,
+    this.isBlock,
+    this.registration,
+    this.numberVerify,
+    this.createdAt,
+    this.updatedAt,
 
   });
 
@@ -90,7 +90,7 @@ class UserData {
       image: json.containsKey('image') &&json['image'] != null?json['image']:"",
       otpExpiredAt:json.containsKey('otp_expired_at') && json['otp_expired_at'] != null?json['otp_expired_at']:"",
       emailVerifiedAt:json.containsKey('email_verified_at') &&json['email_verified_at'] != null? json['email_verified_at']:"",
-     // walletBalance: json.containsKey('wallet_balance') &&json['wallet_balance'] != null?int.parse(json['wallet_balance']):0,
+      // walletBalance: json.containsKey('wallet_balance') &&json['wallet_balance'] != null?int.parse(json['wallet_balance']):0,
       temporaryToken:json.containsKey('temporary_token') &&json['temporary_token'] != null? json['temporary_token']:"",
       referralCode: json.containsKey('referral_code') &&json['referral_code'] != null?json['referral_code']:"",
       referredBy: json.containsKey('referred_by') &&json['referred_by'] != null?json['referred_by']:"",

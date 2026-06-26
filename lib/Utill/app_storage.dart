@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
-import 'package:proxlink/features/auth/Otp/model/otpresponse.dart';
 
+import '../features/auth/Login/models/otpresponse.dart';
 import 'AppConstants.dart';
 
 class AppStorage extends GetxService {

@@ -9,8 +9,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/snackbar/snackbar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:proxlink/Utill/styles.dart';
 
@@ -19,7 +17,6 @@ import 'AppConstants.dart';
 import 'Dimensions.dart';
 import 'ResponsiveView.dart';
 import 'app_base_client.dart';
-import 'app_required.dart';
 
 class AppUtils {
   AppUtils._();
@@ -73,7 +70,7 @@ class AppUtils {
 
     // If the color doesn't have an alpha value (e.g., #RRGGBB), add "FF" for full opacity
     if (hexColor.length == 6) {
-      hexColor = 'FF' + hexColor;
+      hexColor = 'FF$hexColor';
     }
 
     // Convert the hex string to an integer and create the color
@@ -120,9 +117,9 @@ class AppUtils {
 
     return earthRadiusKm * c;
   }
- static Future<Uri> createDynamicLink(String path, String section_id) async {
+ static Future<Uri> createDynamicLink(String path, String sectionId) async {
 
-   String link="https://proxlink.com/$path/${section_id.toString()}";
+   String link="https://proxlink.com/$path/${sectionId.toString()}";
 
     return Uri.parse(link);
   }

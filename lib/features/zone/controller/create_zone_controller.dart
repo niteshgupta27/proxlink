@@ -42,8 +42,34 @@ class CreateZoneController extends GetxController {
   }
 
   Future<void> createZone() async {
-    if (nameController.text.isEmpty || purposeController.text.isEmpty || skills.isEmpty || selectedLat.value == 0) {
-      AppUtils.showSnackbar("Please fill all fields and select location", "Error");
+    if (nameController.text.isEmpty) {
+      AppUtils.showSnackbar("Please enter zone name", "Error");
+      return;
+    }
+
+    if (purposeController.text.isEmpty) {
+      AppUtils.showSnackbar("Please enter zone purpose", "Error");
+      return;
+    }
+
+    if (skills.isEmpty && skillController.text.isEmpty) {
+      AppUtils.showSnackbar("Please add at least one skill", "Error");
+      return;
+    }
+
+    // If there is pending text in the skill field, inform the user or add it
+    if (skillController.text.trim().isNotEmpty) {
+      AppUtils.showSnackbar("Please press the '+' icon or 'Enter' to add the skill: ${skillController.text}", "Info");
+      return;
+    }
+
+    if (skills.isEmpty) {
+      AppUtils.showSnackbar("Please add at least one skill", "Error");
+      return;
+    }
+
+    if (selectedLat.value == 0 || selectedLng.value == 0) {
+      AppUtils.showSnackbar("Please select a location on the map", "Error");
       return;
     }
 
